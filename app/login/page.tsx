@@ -174,14 +174,6 @@ export default function LoginPage() {
               ← Back to website
             </Link>
           </div>
-
-          <div className="mt-8 pt-6 border-t border-slate-700/50">
-            <p className="text-xs text-white/50 text-center font-medium">
-              Default credentials: admin / admin123
-              <br />
-              <span className="text-red-400">Change these in production!</span>
-            </p>
-          </div>
         </div>
       </div>
     </div>
