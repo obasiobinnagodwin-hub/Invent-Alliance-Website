@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { defaultMetadata } from "./metadata";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import ChatbotWidget from "@/components/Chatbot";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export const metadata: Metadata = {
   ...defaultMetadata,
@@ -33,7 +37,12 @@ export default function RootLayout({
         <link rel="canonical" href={process.env.NEXT_PUBLIC_SITE_URL || 'https://www.inventallianceco.com'} />
       </head>
       <body className="antialiased bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800 min-h-screen">
-        {children}
+        <ErrorBoundary>
+          <Navbar />
+          {children}
+          <Footer />
+          <ChatbotWidget />
+        </ErrorBoundary>
       </body>
     </html>
   );
