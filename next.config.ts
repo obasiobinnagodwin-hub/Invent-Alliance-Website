@@ -2,6 +2,26 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  webpack: (config, { isServer }) => {
+    // Fix PDFKit font loading issues in Next.js
+    if (isServer) {
+      // PDFKit needs fs and path modules, so don't disable them
+      // Only configure font file handling
+      config.module = config.module || {};
+      config.module.rules = config.module.rules || [];
+      
+      // Ensure PDFKit can access its font files
+      // Copy font files to a location accessible at runtime
+      config.module.rules.push({
+        test: /node_modules[\\/]pdfkit[\\/]js[\\/]data[\\/].*\.afm$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'static/fonts/[name][ext]'
+        }
+      });
+    }
+    return config;
+  },
   images: {
     remotePatterns: [
       {
