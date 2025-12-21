@@ -287,21 +287,21 @@ export default function Contacts() {
             </div>
           </div>
 
-          {/* Map Image */}
+          {/* Map Section */}
           <div className="glass-dark rounded-lg shadow-xl overflow-hidden border border-slate-700/50 hover:shadow-2xl transition-all duration-300">
             <div className="relative h-96 w-full aspect-video overflow-hidden">
-              <Image
-                src="https://www.inventallianceco.com/wp-content/uploads/2018/01/the_invent_hq.jpg"
-                alt="The Invent HQ"
-                fill
-                className="object-cover brightness-110 contrast-110 hover:scale-105 transition-transform duration-500"
-                sizes="100vw"
+              <iframe
+                src="https://www.google.com/maps?q=6.4742,3.6244&hl=en&z=15&output=embed"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
                 loading="lazy"
-                quality={90}
-                placeholder="blur"
-                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full h-full"
+                title="The Invent HQ Location - Lagos, Nigeria"
               />
-              <div className="absolute inset-0 ring-2 ring-white/10"></div>
+              <div className="absolute inset-0 ring-2 ring-white/10 pointer-events-none"></div>
             </div>
           </div>
         </div>
