@@ -151,6 +151,18 @@ export default function Navbar() {
             </Link>
           </div>
 
+          {/* Desktop Admin Portal Button - Separated from main navigation */}
+          <Link
+            href="/login"
+            className="hidden lg:flex items-center gap-2 ml-6 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all duration-300 shadow-sm hover:shadow-md border-l border-slate-600/40 pl-6"
+            title="Admin Portal"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <span>Admin Portal</span>
+          </Link>
+
           {/* Mobile Menu Button */}
           <button
             className="lg:hidden p-2 text-white hover:text-blue-300 transition-all duration-300"
@@ -227,6 +239,21 @@ export default function Navbar() {
             >
               Contact
             </Link>
+            
+            {/* Mobile Admin Portal Button - Separated at bottom */}
+            <div className="border-t border-slate-600/40 mt-2 pt-2">
+              <Link
+                href="/login"
+                className="block px-4 py-2 bg-blue-600/90 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all duration-300 flex items-center gap-2"
+                onClick={() => setIsMenuOpen(false)}
+                title="Admin Portal"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <span>Admin Portal</span>
+              </Link>
+            </div>
           </div>
         )}
       </div>

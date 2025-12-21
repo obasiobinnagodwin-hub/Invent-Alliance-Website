@@ -1,4 +1,3 @@
-import Footer from '@/components/Footer';
 import ServiceCard from '@/components/ServiceCard';
 import StructuredData from '@/components/StructuredData';
 import Link from 'next/link';
@@ -93,19 +92,6 @@ const services = [
   },
 ];
 
-const recentNews = [
-  {
-    title: 'An Appreciation from Lead-Fort Gate College',
-    date: 'June 5, 2023',
-    slug: '/an-appreciation-from-lead-fort-gate-college',
-  },
-  {
-    title: "National Open University Students' Tour At The Invent",
-    date: 'April 20, 2023',
-    slug: '/national-open-university-students-tour-at-the-invent',
-  },
-];
-
 export default function Home() {
   return (
     <>
@@ -147,7 +133,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
     </>
   );
