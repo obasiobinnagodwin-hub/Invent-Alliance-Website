@@ -62,8 +62,8 @@ The Operations & Analytics Dashboard is a secure web portal that provides compre
 
 **⚠️ IMPORTANT**: Change these credentials in production by setting environment variables:
 ```env
-ADMIN_USERNAME=your-username
-ADMIN_PASSWORD=your-secure-password
+ADMIN_USERNAME=
+ADMIN_PASSWORD=
 JWT_SECRET=your-random-secret-key
 ```
 

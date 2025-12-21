@@ -25,6 +25,11 @@ export interface User {
   updated_at: Date;
 }
 
+// Database query result type that includes password_hash
+interface UserWithPassword extends User {
+  password_hash: string;
+}
+
 // Login function with database lookup
 export async function login(
   username: string,
@@ -38,9 +43,9 @@ export async function login(
     }
 
     // Find user in database
-    let user: User | null;
+    let user: UserWithPassword | null;
     try {
-      user = await queryOne<User>(
+      user = await queryOne<UserWithPassword>(
         'SELECT id, username, password_hash, email, role, is_active FROM users WHERE username = $1',
         [username]
       );

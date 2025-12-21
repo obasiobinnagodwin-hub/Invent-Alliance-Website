@@ -135,11 +135,11 @@ export async function trackSystemMetric(
     return {
       id: row.id,
       timestamp: parseInt(row.timestamp),
-      response_time: row.response_time,
-      status_code: row.status_code,
+      responseTime: row.response_time,
+      statusCode: row.status_code,
       path: row.path,
       method: row.method,
-      error_message: row.error_message || undefined,
+      error: row.error_message || undefined,
     };
   } catch (error) {
     console.error('Track system metric error:', error);
