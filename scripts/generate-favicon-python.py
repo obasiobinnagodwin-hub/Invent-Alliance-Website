@@ -32,7 +32,7 @@ public_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'public')
 def generate_favicons():
     # Check if logo exists
     if not os.path.exists(logo_path):
-        print('❌ Logo file not found!')
+        print('Logo file not found!')
         print('Please download the logo from:')
         print('https://www.inventallianceco.com/wp-content/uploads/2018/01/invent_mainx1.png')
         print('And save it as "logo.png" in the project root.')
@@ -41,7 +41,7 @@ def generate_favicons():
     # Ensure public directory exists
     os.makedirs(public_dir, exist_ok=True)
 
-    print('🔄 Generating favicons...')
+    print('Generating favicons...')
 
     try:
         # Open the logo
@@ -58,13 +58,13 @@ def generate_favicons():
             # Save as PNG
             output_path = os.path.join(public_dir, name)
             favicon.save(output_path, 'PNG')
-            print(f'✅ Generated {name}')
+            print(f'Generated {name}')
 
         # Generate favicon.ico (using 32x32 as base)
         favicon_32 = logo.resize((32, 32), Image.Resampling.LANCZOS)
         favicon_ico_path = os.path.join(public_dir, 'favicon.ico')
         favicon_32.save(favicon_ico_path, 'ICO')
-        print('✅ Generated favicon.ico')
+        print('Generated favicon.ico')
 
         # Generate site.webmanifest
         manifest = {
@@ -88,14 +88,14 @@ def generate_favicons():
         }
 
         manifest_path = os.path.join(public_dir, 'site.webmanifest')
-        with open(manifest_path, 'w') as f:
+        with open(manifest_path, 'w', encoding='utf-8') as f:
             json.dump(manifest, f, indent=2)
-        print('✅ Generated site.webmanifest')
+        print('Generated site.webmanifest')
 
-        print('\n✨ All favicons generated successfully!')
-        print('📁 Files are in the public/ directory')
+        print('\nAll favicons generated successfully!')
+        print('Files are in the public/ directory')
     except Exception as e:
-        print(f'❌ Error generating favicons: {str(e)}')
+        print(f'Error generating favicons: {str(e)}')
         print('\nMake sure Pillow is installed: pip install Pillow')
 
 if __name__ == '__main__':
