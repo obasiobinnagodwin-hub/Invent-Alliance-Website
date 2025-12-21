@@ -1,6 +1,5 @@
 'use client';
 
-import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -110,7 +109,6 @@ export default function Contacts() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800">
-      <Navbar />
       <main className="flex-grow py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-extrabold text-white mb-8 text-center text-elevated-strong">Contact Us</h1>

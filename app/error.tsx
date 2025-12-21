@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
 export default function Error({
@@ -19,7 +18,6 @@ export default function Error({
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800">
-      <Navbar />
       <main className="flex-grow flex items-center justify-center py-12 px-4">
         <div className="text-center max-w-2xl">
           <h1 className="text-6xl font-extrabold text-white mb-4 text-elevated-strong neon-text-red">Something went wrong!</h1>

@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Metadata } from 'next';
 
@@ -15,7 +14,6 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800">
-      <Navbar />
       <main className="flex-grow flex items-center justify-center py-12 px-4">
         <div className="text-center max-w-2xl">
           <div className="mb-8">

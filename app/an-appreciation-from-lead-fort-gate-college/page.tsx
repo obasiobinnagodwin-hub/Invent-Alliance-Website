@@ -1,4 +1,3 @@
-import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 
@@ -10,7 +9,6 @@ export const metadata = {
 export default function BlogPost() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800">
-      <Navbar />
       <main className="flex-grow py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link href="/blog" className="text-neon-cyan hover:text-neon-blue mb-4 inline-block font-bold transition-colors duration-300">

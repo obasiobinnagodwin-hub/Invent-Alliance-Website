@@ -1,4 +1,3 @@
-import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ServiceCard from '@/components/ServiceCard';
 import StructuredData from '@/components/StructuredData';
@@ -112,7 +111,6 @@ export default function Home() {
     <>
       <StructuredData data={organizationSchema} />
       <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800">
-        <Navbar />
         <main className="flex-grow">
         {/* Hero Section */}
         <section className="relative bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 py-20 overflow-hidden">

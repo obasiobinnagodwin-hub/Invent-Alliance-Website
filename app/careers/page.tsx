@@ -1,4 +1,3 @@
-import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
 export const metadata = {
@@ -14,7 +13,6 @@ export const metadata = {
 export default function Careers() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800">
-      <Navbar />
       <main className="flex-grow py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-extrabold text-white mb-8 text-center text-elevated-strong">Careers</h1>
