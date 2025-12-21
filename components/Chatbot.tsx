@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 
+// Import CSS statically
+import 'react-chatbot-kit/build/main.css';
+
 // Dynamically import Chatbot to avoid SSR issues
 const Chatbot = dynamic(() => import('react-chatbot-kit').then((mod) => mod.default), {
   ssr: false,
@@ -19,8 +22,6 @@ export default function ChatbotWidget() {
 
   useEffect(() => {
     setIsMounted(true);
-    // Import CSS dynamically
-    import('react-chatbot-kit/build/main.css');
   }, []);
 
   if (!isMounted) {
@@ -48,7 +49,7 @@ export default function ChatbotWidget() {
           </div>
           <div className="flex-1 overflow-hidden bg-gray-50">
             <Chatbot
-              config={config}
+              config={config as any}
               messageParser={MessageParser}
               actionProvider={ActionProvider}
             />

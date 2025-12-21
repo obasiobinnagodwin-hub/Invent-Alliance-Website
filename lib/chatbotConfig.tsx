@@ -22,9 +22,11 @@ const config = {
     {
       widgetName: 'options',
       widgetFunc: (props: any) => React.createElement(ChatbotOptions, props),
+      props: {},
+      mapStateToProps: [],
     },
   ],
-};
+} as any;
 
 export default config;
 
