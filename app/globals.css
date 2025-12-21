@@ -1,0 +1,255 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus visible for accessibility */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Image optimization */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevent layout shift for images */
+.image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-container::before {
+  content: '';
+  display: block;
+  padding-bottom: var(--aspect-ratio, 56.25%); /* 16:9 default */
+}
+
+/* Aspect ratio utilities */
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
+.aspect-4-3 {
+  aspect-ratio: 4 / 3;
+}
+
+.aspect-3-2 {
+  aspect-ratio: 3 / 2;
+}
+
+/* Elevated Text Effect */
+.text-elevated {
+  font-weight: 700;
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 6px 12px rgba(0, 0, 0, 0.2),
+    0 0 20px rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.text-elevated-bold {
+  font-weight: 800;
+  text-shadow: 
+    0 3px 6px rgba(0, 0, 0, 0.6),
+    0 6px 12px rgba(0, 0, 0, 0.4),
+    0 9px 18px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(255, 255, 255, 0.15);
+  letter-spacing: 0.8px;
+}
+
+.text-elevated-strong {
+  font-weight: 900;
+  text-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.7),
+    0 8px 16px rgba(0, 0, 0, 0.5),
+    0 12px 24px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(255, 255, 255, 0.2);
+  letter-spacing: 1px;
+}
+
+/* Neon Effects */
+.neon-text {
+  text-shadow: 
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 15px currentColor,
+    0 0 20px currentColor;
+}
+
+.neon-text-blue {
+  color: #00f0ff;
+  text-shadow: 
+    0 0 5px #00f0ff,
+    0 0 10px #00f0ff,
+    0 0 15px #00f0ff,
+    0 0 20px #00f0ff;
+}
+
+.neon-text-purple {
+  color: #a855f7;
+  text-shadow: 
+    0 0 5px #a855f7,
+    0 0 10px #a855f7,
+    0 0 15px #a855f7,
+    0 0 20px #a855f7;
+}
+
+.neon-text-cyan {
+  color: #00ffff;
+  text-shadow: 
+    0 0 5px #00ffff,
+    0 0 10px #00ffff,
+    0 0 15px #00ffff,
+    0 0 20px #00ffff;
+}
+
+.neon-text-red {
+  color: #ff4444;
+  text-shadow: 
+    0 0 5px #ff4444,
+    0 0 10px #ff4444,
+    0 0 15px #ff4444,
+    0 0 20px #ff4444;
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient 8s linear infinite;
+}
+
+.gradient-text-blue {
+  background: linear-gradient(135deg, #00f0ff 0%, #0066ff 50%, #00f0ff 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient 4s linear infinite;
+}
+
+.gradient-text-purple {
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #a855f7 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient 4s linear infinite;
+}
+
+/* Neon Border */
+.neon-border {
+  border: 2px solid;
+  border-image: linear-gradient(135deg, #00f0ff, #a855f7, #00ffff) 1;
+  box-shadow: 
+    0 0 5px rgba(0, 240, 255, 0.5),
+    inset 0 0 5px rgba(0, 240, 255, 0.5);
+}
+
+/* Gradient Backgrounds */
+.bg-gradient-neon {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+  background-size: 200% 200%;
+  animation: gradient 8s linear infinite;
+}
+
+.bg-gradient-neon-blue {
+  background: linear-gradient(135deg, #00f0ff 0%, #0066ff 50%, #00f0ff 100%);
+  background-size: 200% 200%;
+  animation: gradient 4s linear infinite;
+}
+
+.bg-gradient-neon-purple {
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #a855f7 100%);
+  background-size: 200% 200%;
+  animation: gradient 4s linear infinite;
+}
+
+/* Hover Effects */
+.hover-neon:hover {
+  text-shadow: 
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 15px currentColor,
+    0 0 20px currentColor;
+  transition: text-shadow 0.3s ease;
+}
+
+.hover-glow-blue:hover {
+  box-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff, 0 0 30px #00f0ff;
+  transition: box-shadow 0.3s ease;
+}
+
+.hover-glow-purple:hover {
+  box-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7, 0 0 30px #a855f7;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(51, 65, 85, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
