@@ -1,5 +1,8 @@
 // Database-backed analytics system
 import { query, queryOne, transaction } from './db';
+import { logger } from './secure-logger';
+import { pseudonymizeIP, hashForAnalytics } from './data-protection';
+import { FEATURE_PII_HASHING } from './feature-flags';
 
 export interface PageView {
   id: string;
@@ -49,28 +52,52 @@ export async function trackPageView(
 
       if (session.rows.length === 0) {
         // Create session if it doesn't exist
+        // Calculate IP hash if feature is enabled
+        const ipHash = FEATURE_PII_HASHING && data.ip 
+          ? hashForAnalytics(pseudonymizeIP(data.ip))
+          : null;
+
+        // Enforce length limits before DB insert
+        const sessionId = (data.sessionId || '').substring(0, 255);
+        const ip = (data.ip || '').substring(0, 45);
+        const userAgent = (data.userAgent || '').substring(0, 500);
+        const referrer = data.referrer ? data.referrer.substring(0, 500) : null;
+
         await client.query(
           `INSERT INTO visitor_sessions 
-           (id, start_time, last_activity, page_views_count, ip_address, user_agent, referrer)
-           VALUES ($1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, $2, $3, $4)
+           (id, start_time, last_activity, page_views_count, ip_address, ip_address_hash, user_agent, referrer)
+           VALUES ($1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 0, $2, $3, $4, $5)
            ON CONFLICT (id) DO NOTHING`,
-          [data.sessionId, data.ip, data.userAgent, data.referrer || null]
+          [sessionId, ip, ipHash, userAgent, referrer]
         );
       }
 
       // Insert page view
+      // Calculate IP hash if feature is enabled
+      const ipHash = FEATURE_PII_HASHING && data.ip 
+        ? hashForAnalytics(pseudonymizeIP(data.ip))
+        : null;
+
+      // Enforce length limits before DB insert
+      const sessionId = (data.sessionId || '').substring(0, 255);
+      const path = (data.path || '').substring(0, 500);
+      const ip = (data.ip || '').substring(0, 45);
+      const userAgent = (data.userAgent || '').substring(0, 500);
+      const referrer = data.referrer ? data.referrer.substring(0, 500) : null;
+
       const result = await client.query(
         `INSERT INTO page_views 
-         (session_id, path, timestamp, ip_address, user_agent, referrer, time_on_page)
-         VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6)
+         (session_id, path, timestamp, ip_address, ip_address_hash, user_agent, referrer, time_on_page)
+         VALUES ($1, $2, CURRENT_TIMESTAMP, $3, $4, $5, $6, $7)
          RETURNING id, session_id, path, EXTRACT(EPOCH FROM timestamp) * 1000 as timestamp, 
                    ip_address, user_agent, referrer, time_on_page`,
         [
-          data.sessionId,
-          data.path,
-          data.ip,
-          data.userAgent,
-          data.referrer || null,
+          sessionId,
+          path,
+          ip,
+          ipHash,
+          userAgent,
+          referrer,
           data.timeOnPage || null,
         ]
       );
@@ -88,7 +115,7 @@ export async function trackPageView(
       };
     });
   } catch (error) {
-    console.error('Track page view error:', error);
+    logger.error('Track page view error', error instanceof Error ? error : new Error(String(error)));
     // Return a minimal page view object to prevent crashes
     return {
       id: `error-${Date.now()}`,
@@ -125,9 +152,9 @@ export async function trackSystemMetric(
       [
         data.responseTime,
         data.statusCode,
-        data.path,
-        data.method,
-        data.error || null,
+        (data.path || '').substring(0, 500), // Enforce length limit
+        (data.method || '').substring(0, 10), // Enforce length limit
+        data.error ? data.error.substring(0, 1000) : null, // Enforce length limit
       ]
     );
 
@@ -142,7 +169,7 @@ export async function trackSystemMetric(
       error: row.error_message || undefined,
     };
   } catch (error) {
-    console.error('Track system metric error:', error);
+    logger.error('Track system metric error', error instanceof Error ? error : new Error(String(error)));
     throw error;
   }
 }
@@ -193,10 +220,10 @@ export async function getPageViews(filters?: {
       timeOnPage: row.time_on_page,
     }));
   } catch (error) {
-    console.error('Get page views error:', error);
+    logger.error('Get page views error', error instanceof Error ? error : new Error(String(error)));
     // If it's a connection error, provide helpful message
     if (error instanceof Error && error.message.includes('connect')) {
-      console.error('Database connection failed. Please check your database configuration.');
+      logger.error('Database connection failed. Please check your database configuration.');
     }
     return [];
   }
@@ -227,7 +254,7 @@ export async function getUniqueVisitors(filters?: {
     const result = await queryOne<{ count: string }>(sql, params);
     return result ? parseInt(result.count) : 0;
   } catch (error) {
-    console.error('Get unique visitors error:', error);
+    logger.error('Get unique visitors error', error instanceof Error ? error : new Error(String(error)));
     return 0;
   }
 }
@@ -263,7 +290,7 @@ export async function getPageViewsByPath(filters?: {
       count: parseInt(row.count),
     }));
   } catch (error) {
-    console.error('Get page views by path error:', error);
+    logger.error('Get page views by path error', error instanceof Error ? error : new Error(String(error)));
     return [];
   }
 }
@@ -299,7 +326,7 @@ export async function getTrafficSources(filters?: {
       count: parseInt(row.count),
     }));
   } catch (error) {
-    console.error('Get traffic sources error:', error);
+    logger.error('Get traffic sources error', error instanceof Error ? error : new Error(String(error)));
     return [];
   }
 }
@@ -343,7 +370,7 @@ export async function getSessions(filters?: {
       referrer: row.referrer || '',
     }));
   } catch (error) {
-    console.error('Get sessions error:', error);
+    logger.error('Get sessions error', error instanceof Error ? error : new Error(String(error)));
     return [];
   }
 }
@@ -393,7 +420,7 @@ export async function getSystemMetrics(filters?: {
       error: row.error_message || undefined,
     }));
   } catch (error) {
-    console.error('Get system metrics error:', error);
+    logger.error('Get system metrics error', error instanceof Error ? error : new Error(String(error)));
     return [];
   }
 }
@@ -485,7 +512,7 @@ export async function getSystemStats(filters?: {
       statusCodes,
     };
   } catch (error) {
-    console.error('Get system stats error:', error);
+    logger.error('Get system stats error', error instanceof Error ? error : new Error(String(error)));
     return {
       totalRequests: 0,
       averageResponseTime: 0,
@@ -543,7 +570,7 @@ export async function getTimeSeriesData(filters?: {
       count: parseInt(row.count),
     }));
   } catch (error) {
-    console.error('Get time series data error:', error);
+    logger.error('Get time series data error', error instanceof Error ? error : new Error(String(error)));
     return [];
   }
 }
@@ -569,7 +596,7 @@ export async function cleanupOldData(): Promise<void> {
       [cutoffDate]
     );
   } catch (error) {
-    console.error('Cleanup old data error:', error);
+    logger.error('Cleanup old data error', error instanceof Error ? error : new Error(String(error)));
   }
 }
 
@@ -587,9 +614,9 @@ export async function seedAnalyticsData(): Promise<void> {
 
     // This would be called from the seed script, not here
     // But we can provide a helper function
-    console.log('Use database/seed.sql to seed test data');
+    logger.info('Use database/seed.sql to seed test data');
   } catch (error) {
-    console.error('Seed analytics data error:', error);
+    logger.error('Seed analytics data error', error instanceof Error ? error : new Error(String(error)));
   }
 }
 

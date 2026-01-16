@@ -2,8 +2,13 @@
 
 import Footer from '@/components/Footer';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Metadata } from 'next';
+import AccessibleFormField from '@/components/AccessibleFormField';
+import TrustSignals from '@/components/TrustSignals';
+import CTAButton from '@/components/CTAButton';
+import { FEATURE_ACCESSIBILITY_UPGRADES } from '@/lib/feature-flags';
+import { trackGoal, trackFunnelStep, GoalType, FunnelName, FunnelStep } from '@/lib/analytics-goals';
 
 // Note: Metadata can't be exported from client components
 // Consider moving metadata to a layout or using generateMetadata
@@ -28,6 +33,18 @@ export default function Contacts() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  // Track funnel step on page load
+  useEffect(() => {
+    trackFunnelStep(FunnelName.CONTACT_FORM, FunnelStep.PAGE_LOAD);
+  }, []);
+
+  // Track funnel step when form interaction starts
+  useEffect(() => {
+    if (formData.name || formData.email || formData.subject || formData.message) {
+      trackFunnelStep(FunnelName.CONTACT_FORM, FunnelStep.FORM_START);
+    }
+  }, [formData.name, formData.email, formData.subject, formData.message]);
+
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
@@ -51,10 +68,30 @@ export default function Contacts() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Helper function to get CSRF token from API endpoint
+  // (Cookie is HttpOnly, so we can't read it directly from JavaScript)
+  const getCSRFToken = async (): Promise<string | null> => {
+    try {
+      const response = await fetch('/api/csrf-token');
+      if (response.ok) {
+        const data = await response.json();
+        return data.token || null;
+      }
+    } catch (error) {
+      console.error('Failed to fetch CSRF token:', error);
+    }
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitStatus(null);
     setErrors({});
+
+    // Track form submit attempt
+    trackFunnelStep(FunnelName.CONTACT_FORM, FunnelStep.FORM_SUBMIT, {
+      hasSubject: !!formData.subject,
+    });
 
     if (!validateForm()) {
       return;
@@ -63,11 +100,19 @@ export default function Contacts() {
     setIsSubmitting(true);
 
     try {
+      const csrfToken = await getCSRFToken();
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      
+      // Include CSRF token in header if available
+      if (csrfToken) {
+        headers['X-CSRF-Token'] = csrfToken;
+      }
+
       const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(formData),
       });
 
@@ -81,6 +126,15 @@ export default function Contacts() {
         type: 'success',
         message: data.message || 'Thank you for your message! We will get back to you soon.',
       });
+      
+      // Track successful goal conversion
+      trackGoal(GoalType.CONTACT_FORM_SUBMIT, {
+        subjectCategory: formData.subject.length > 0 ? 'has_subject' : 'no_subject',
+      });
+      
+      // Track funnel success step
+      trackFunnelStep(FunnelName.CONTACT_FORM, FunnelStep.SUCCESS);
+      
       setFormData({ name: '', email: '', subject: '', message: '', website: '' });
     } catch (error) {
       setSubmitStatus({
@@ -109,7 +163,7 @@ export default function Contacts() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800">
-      <main className="flex-grow py-12">
+      <main id="main-content" tabIndex={-1} className="flex-grow py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-extrabold text-white mb-8 text-center text-elevated-strong">Contact Us</h1>
           
@@ -143,6 +197,8 @@ export default function Contacts() {
             <div className="glass-dark rounded-lg shadow-neon-purple p-8 border border-purple-500/30">
               <h3 className="text-2xl font-bold text-white mb-6 text-elevated-bold">Feedback Form</h3>
               
+              <TrustSignals />
+              
               {submitStatus && (
                 <div
                   className={`mb-6 p-4 rounded-md ${
@@ -170,53 +226,80 @@ export default function Contacts() {
                   />
                 </div>
 
-                <div>
-                  <label htmlFor="name" className="block text-sm font-bold text-white mb-2 text-elevated">
-                    Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-md bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-cyan focus:border-neon-cyan ${
-                      errors.name ? 'border-red-400' : 'border-purple-500/50'
-                    }`}
-                    aria-invalid={errors.name ? 'true' : 'false'}
-                    aria-describedby={errors.name ? 'name-error' : undefined}
-                  />
-                  {errors.name && (
-                    <p id="name-error" className="mt-1 text-sm text-red-300 font-semibold" role="alert">
-                      {errors.name}
-                    </p>
-                  )}
-                </div>
+                {FEATURE_ACCESSIBILITY_UPGRADES ? (
+                  <>
+                    <AccessibleFormField
+                      id="name"
+                      name="name"
+                      label="Name"
+                      type="text"
+                      value={formData.name}
+                      onChange={handleChange}
+                      error={errors.name}
+                      required={true}
+                    />
+                    <AccessibleFormField
+                      id="email"
+                      name="email"
+                      label="Email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      error={errors.email}
+                      required={true}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-bold text-white mb-2 text-elevated">
+                        Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        value={formData.name}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-2 border rounded-md bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-cyan focus:border-neon-cyan ${
+                          errors.name ? 'border-red-400' : 'border-purple-500/50'
+                        }`}
+                        aria-invalid={errors.name ? 'true' : 'false'}
+                        aria-describedby={errors.name ? 'name-error' : undefined}
+                      />
+                      {errors.name && (
+                        <p id="name-error" className="mt-1 text-sm text-red-300 font-semibold" role="alert">
+                          {errors.name}
+                        </p>
+                      )}
+                    </div>
 
-                <div>
-                  <label htmlFor="email" className="block text-sm font-bold text-white mb-2 text-elevated">
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-md bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-cyan focus:border-neon-cyan ${
-                      errors.email ? 'border-red-400' : 'border-purple-500/50'
-                    }`}
-                    aria-invalid={errors.email ? 'true' : 'false'}
-                    aria-describedby={errors.email ? 'email-error' : undefined}
-                  />
-                  {errors.email && (
-                    <p id="email-error" className="mt-1 text-sm text-red-300 font-semibold" role="alert">
-                      {errors.email}
-                    </p>
-                  )}
-                </div>
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-bold text-white mb-2 text-elevated">
+                        Email *
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        value={formData.email}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-2 border rounded-md bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-cyan focus:border-neon-cyan ${
+                          errors.email ? 'border-red-400' : 'border-purple-500/50'
+                        }`}
+                        aria-invalid={errors.email ? 'true' : 'false'}
+                        aria-describedby={errors.email ? 'email-error' : undefined}
+                      />
+                      {errors.email && (
+                        <p id="email-error" className="mt-1 text-sm text-red-300 font-semibold" role="alert">
+                          {errors.email}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
 
                 <div>
                   <label htmlFor="subject" className="block text-sm font-bold text-white mb-2 text-elevated">
@@ -242,29 +325,43 @@ export default function Contacts() {
                   )}
                 </div>
 
-                <div>
-                  <label htmlFor="message" className="block text-sm font-bold text-white mb-2 text-elevated">
-                    Message *
-                  </label>
-                  <textarea
+                {FEATURE_ACCESSIBILITY_UPGRADES ? (
+                  <AccessibleFormField
                     id="message"
                     name="message"
-                    rows={6}
-                    required
+                    label="Message"
+                    type="textarea"
                     value={formData.message}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-md bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-cyan focus:border-neon-cyan ${
-                      errors.message ? 'border-red-400' : 'border-purple-500/50'
-                    }`}
-                    aria-invalid={errors.message ? 'true' : 'false'}
-                    aria-describedby={errors.message ? 'message-error' : undefined}
+                    error={errors.message}
+                    required={true}
+                    rows={6}
                   />
-                  {errors.message && (
-                    <p id="message-error" className="mt-1 text-sm text-red-300 font-semibold" role="alert">
-                      {errors.message}
-                    </p>
-                  )}
-                </div>
+                ) : (
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-bold text-white mb-2 text-elevated">
+                      Message *
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      rows={6}
+                      required
+                      value={formData.message}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-2 border rounded-md bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-cyan focus:border-neon-cyan ${
+                        errors.message ? 'border-red-400' : 'border-purple-500/50'
+                      }`}
+                      aria-invalid={errors.message ? 'true' : 'false'}
+                      aria-describedby={errors.message ? 'message-error' : undefined}
+                    />
+                    {errors.message && (
+                      <p id="message-error" className="mt-1 text-sm text-red-300 font-semibold" role="alert">
+                        {errors.message}
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {errors.general && (
                   <div className="p-4 bg-red-50 border border-red-200 rounded-md">

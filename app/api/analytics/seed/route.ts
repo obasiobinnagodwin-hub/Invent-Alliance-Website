@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
-import { seedAnalyticsData } from '@/lib/analytics';
+
+// Force dynamic rendering to prevent build-time analysis issues
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+export const runtime = 'nodejs';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
 
 async function requireAuth(request: NextRequest): Promise<boolean> {
+  // Dynamic imports to prevent build-time analysis issues
+  const { verifyToken } = await import('@/lib/auth');
   const token = request.cookies.get('auth-token')?.value;
   if (!token) return false;
   
@@ -18,6 +25,8 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // Dynamic import to prevent build-time analysis issues
+    const { seedAnalyticsData } = await import('@/lib/analytics');
     seedAnalyticsData();
     return NextResponse.json({ 
       success: true, 

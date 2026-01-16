@@ -1,8 +1,8 @@
 # Invent Alliance Limited Website
 ## Architecture & Site Feature Description Document
 
-**Version:** 1.0  
-**Last Updated:** December 2024  
+**Version:** 2.0  
+**Last Updated:** January 2025  
 **Project:** Next.js Website Redesign
 
 ---
@@ -16,11 +16,13 @@
 5. [Project Structure](#project-structure)
 6. [Key Components](#key-components)
 7. [Forms & API Routes](#forms--api-routes)
-8. [SEO & Performance](#seo--performance)
-9. [Deployment & Infrastructure](#deployment--infrastructure)
-10. [Security Features](#security-features)
-11. [Accessibility](#accessibility)
-12. [Future Enhancements](#future-enhancements)
+8. [Admin Dashboard & Analytics](#admin-dashboard--analytics)
+9. [Database Integration](#database-integration)
+10. [SEO & Performance](#seo--performance)
+11. [Deployment & Infrastructure](#deployment--infrastructure)
+12. [Security Features](#security-features)
+13. [Accessibility](#accessibility)
+14. [Future Enhancements](#future-enhancements)
 
 ---
 
@@ -31,9 +33,10 @@
 The Invent Alliance Limited website is a modern, professional web presence rebuilt using cutting-edge web technologies. The site provides:
 
 - **Fast Loading**: Pages load quickly on all devices (desktop, tablet, mobile)
-- **Easy Navigation**: Intuitive menu system with dropdown options
+- **Easy Navigation**: Intuitive menu system with dropdown options and Admin Portal access
 - **Contact Forms**: Two forms for inquiries and academy registration
 - **Interactive Chatbot**: AI-powered assistant to help visitors find information
+- **Admin Dashboard**: Secure analytics dashboard with comprehensive website metrics
 - **Mobile-Friendly**: Fully responsive design that works on all screen sizes
 - **Search Engine Optimized**: Built to rank well in Google and other search engines
 - **Professional Design**: Modern, clean interface with enhanced visual effects
@@ -45,6 +48,9 @@ The website is built using **Next.js 15** with the **App Router**, leveraging **
 - **Static Site Generation (SSG)** for optimal performance
 - **Server Components** by default to minimize client-side JavaScript
 - **API Routes** for form submissions with SMTP email integration
+- **Analytics System** with real-time tracking and comprehensive dashboard
+- **Database Integration** with PostgreSQL for persistent data storage
+- **Authentication System** with JWT-based secure login
 - **Docker** containerization for consistent deployment
 - **Comprehensive SEO** with metadata, structured data, and sitemaps
 - **Performance optimizations** targeting Core Web Vitals
@@ -66,25 +72,34 @@ The website is built using **Next.js 15** with the **App Router**, leveraging **
 ┌──────────────────────▼──────────────────────────────────────┐
 │                    Next.js Application                       │
 │  ┌──────────────────────────────────────────────────────┐  │
+│  │  Middleware (Edge Runtime)                            │  │
+│  │  - Analytics Tracking                                  │  │
+│  │  - Session Management                                  │  │
+│  └──────────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────────┐  │
 │  │  App Router (Server Components)                        │  │
 │  │  - Static Pages (SSG)                                │  │
 │  │  - Dynamic Routes (API)                               │  │
+│  │  - Dashboard (Protected)                             │  │
 │  └──────────────────────────────────────────────────────┘  │
 │  ┌──────────────────────────────────────────────────────┐  │
 │  │  Client Components                                    │  │
-│  │  - Navbar (Interactive)                              │  │
+│  │  - Navbar (Interactive + Admin Portal)              │  │
 │  │  - Forms (Contact, Academy)                          │  │
 │  │  - Chatbot Widget                                    │  │
+│  │  - Dashboard (Charts, Tables, Metrics)              │  │
 │  └──────────────────────────────────────────────────────┘  │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-                       │ SMTP
-                       │
-┌──────────────────────▼──────────────────────────────────────┐
-│                  Email Service (SMTP)                        │
-│  - Gmail / Custom SMTP Server                               │
-│  - Sends form submissions to recipients                    │
-└──────────────────────────────────────────────────────────────┘
+└──────┬──────────────────────────────┬───────────────────────┘
+       │                              │
+       │ SMTP                         │ PostgreSQL
+       │                              │
+┌──────▼──────────────┐    ┌──────────▼──────────────────────┐
+│  Email Service      │    │  PostgreSQL Database            │
+│  (SMTP)             │    │  - Users & Authentication        │
+│  - Gmail / Custom   │    │  - Analytics Data               │
+│  - Form submissions │    │  - Sessions & Page Views        │
+└─────────────────────┘    │  - System Metrics               │
+                           └──────────────────────────────────┘
 ```
 
 ### Rendering Strategy
@@ -106,7 +121,9 @@ The website is built using **Next.js 15** with the **App Router**, leveraging **
   - Navigation dropdowns and mobile menu
   - Form handling and validation
   - Chatbot widget
+  - Dashboard charts and interactive elements
   - Error boundaries
+  - Protected routes and authentication
 
 ### Data Flow
 
@@ -126,6 +143,18 @@ The website is built using **Next.js 15** with the **App Router**, leveraging **
    - Message parser analyzes intent → Action provider responds
    - No server round-trip for basic interactions
 
+4. **Analytics Tracking**
+   - Page request → Middleware intercepts → Tracks page view
+   - Session ID generated/stored in cookie
+   - Analytics data stored (in-memory or database)
+   - Dashboard queries analytics API → Displays metrics
+
+5. **Authentication Flow**
+   - User visits `/login` → Enters credentials
+   - POST to `/api/auth/login` → Server validates
+   - JWT token generated → Set as HTTP-only cookie
+   - Redirect to `/dashboard` → Protected route verifies token
+
 ---
 
 ## Site Features
@@ -136,6 +165,7 @@ The website is built using **Next.js 15** with the **App Router**, leveraging **
 - **Sticky Navigation Bar**: Remains visible while scrolling
 - **Responsive Design**: Hamburger menu on mobile devices
 - **Dropdown Menus**: Organized navigation for About Us and Services
+- **Admin Portal Button**: Secure access to analytics dashboard (desktop: top-right, mobile: in menu)
 - **Logo Enhancement**: 3D effects and hover animations
 - **Accessible**: Keyboard navigation and ARIA labels
 
@@ -262,7 +292,38 @@ Contact
 - **Copyright**: "© 2024 Invent Alliance Limited. All rights reserved."
 - **Redesign Credit**: "Redesigned by Invent IT Team"
 
-### 10. Error Handling
+### 10. Admin Dashboard & Analytics Portal
+
+**Access:**
+- **Login Page** (`/login`): Secure authentication portal
+- **Admin Portal Button**: Accessible from navbar (desktop and mobile)
+- **Protected Routes**: Dashboard requires valid authentication
+
+**Features:**
+- **Real-Time Analytics**: Automatic tracking via middleware
+- **Comprehensive Metrics**:
+  - Page views and unique visitors
+  - Session tracking and analysis
+  - Popular pages and traffic sources
+  - System performance metrics
+- **Visual Dashboards**:
+  - Overview tab with key metrics cards
+  - Interactive charts (Line charts, Bar charts)
+  - Data tables with detailed statistics
+  - System performance monitoring
+- **Report Export**:
+  - CSV export for data analysis
+  - PDF export for presentations
+  - Date range filtering (7, 30, 90 days)
+- **Responsive Design**: Fully optimized for all screen sizes
+
+**Dashboard Tabs:**
+1. **Overview**: Key metrics, page views over time, top pages
+2. **Pages**: Detailed page view statistics and charts
+3. **Sources**: Traffic source breakdown and analysis
+4. **System**: API performance, response times, error rates
+
+### 11. Error Handling
 
 **Error Pages:**
 - **404 Not Found**: Custom page with helpful links
@@ -291,6 +352,11 @@ Contact
 | **react-chatbot-kit** | Chatbot widget functionality |
 | **nodemailer** | SMTP email sending |
 | **next/image** | Image optimization |
+| **recharts** | Chart library for dashboard visualizations |
+| **pdfkit** | PDF generation for report exports |
+| **pg** | PostgreSQL client for database operations |
+| **bcryptjs** | Password hashing for authentication |
+| **jsonwebtoken** | JWT token generation and verification |
 | **ESLint** | Code quality and linting |
 
 ### Development Tools
@@ -325,12 +391,28 @@ ial-website-redesign/
 │   ├── contacts/                 # Contact page with form
 │   ├── invent-academy-registration/  # Academy registration form
 │   ├── [blog-slug]/             # Individual blog posts
+│   ├── login/                    # Login page
+│   ├── dashboard/                # Admin dashboard (protected)
+│   │   ├── page.tsx             # Dashboard main page
+│   │   └── layout.tsx           # Dashboard layout
 │   ├── api/                      # API routes
 │   │   ├── contact/             # Contact form handler
-│   │   └── academy-registration/ # Academy form handler
+│   │   ├── academy-registration/ # Academy form handler
+│   │   ├── auth/                 # Authentication endpoints
+│   │   │   ├── login/            # Login handler
+│   │   │   ├── logout/           # Logout handler
+│   │   │   └── verify/           # Token verification
+│   │   └── analytics/            # Analytics endpoints
+│   │       ├── route.ts         # Analytics data retrieval
+│   │       ├── track/            # Manual tracking endpoint
+│   │       ├── seed/             # Data seeding endpoint
+│   │       └── export/           # Report export
+│   │           ├── csv/         # CSV export
+│   │           └── pdf/         # PDF export
 │   ├── sitemap.ts               # Dynamic sitemap generation
 │   ├── robots.ts                 # Robots.txt configuration
 │   ├── error.tsx                 # Error page
+│   ├── global-error.tsx          # Global error handler
 │   ├── not-found.tsx            # 404 page
 │   └── loading.tsx              # Loading state
 ├── components/                   # Reusable React components
@@ -340,13 +422,40 @@ ial-website-redesign/
 │   ├── Chatbot.tsx              # Chatbot widget
 │   ├── ChatbotOptions.tsx       # Chatbot quick actions
 │   ├── ErrorBoundary.tsx        # Error boundary wrapper
+│   ├── ErrorBoundaryWrapper.tsx # Error boundary wrapper component
+│   ├── ConditionalLayout.tsx    # Conditional layout wrapper
+│   ├── ProtectedRoute.tsx       # Route protection component
 │   ├── LoadingSkeleton.tsx      # Loading skeleton component
-│   └── StructuredData.tsx       # JSON-LD structured data
+│   ├── StructuredData.tsx        # JSON-LD structured data
+│   └── dashboard/               # Dashboard components
+│       ├── MetricCard.tsx       # Metric display card
+│       ├── LineChart.tsx        # Line chart component
+│       ├── BarChart.tsx          # Bar chart component
+│       └── DataTable.tsx         # Data table component
 ├── lib/                          # Utility libraries
 │   ├── chatbotConfig.tsx        # Chatbot configuration
 │   ├── MessageParser.ts         # Chatbot message parsing
-│   ├── ActionProvider.tsx      # Chatbot action handlers
+│   ├── ActionProvider.tsx        # Chatbot action handlers
+│   ├── auth.ts                  # In-memory authentication
+│   ├── auth-db.ts               # Database-backed authentication
+│   ├── auth-wrapper.ts          # Authentication wrapper
+│   ├── analytics.ts             # In-memory analytics
+│   ├── analytics-db.ts          # Database-backed analytics
+│   ├── analytics-wrapper.ts     # Analytics wrapper
+│   ├── db.ts                    # PostgreSQL connection utility
+│   ├── pdf-config.ts            # PDF generation configuration
 │   └── utils.ts                 # Utility functions
+├── database/                     # Database schema and migrations
+│   ├── schema.sql               # Main database schema
+│   ├── seed.sql                 # Database seeding script
+│   ├── README.md                # Database documentation
+│   └── migrations/              # Database migration scripts
+├── scripts/                      # Build and utility scripts
+│   ├── generate-favicon.js     # Favicon generation (Node.js)
+│   ├── generate-favicon-python.py # Favicon generation (Python)
+│   ├── setup-pdfkit-fonts.js    # PDFKit font setup
+│   └── create-admin-user.js    # Admin user creation script
+├── middleware.ts                 # Next.js middleware for analytics
 ├── public/                       # Static assets
 │   ├── favicon.ico              # Favicon files
 │   └── [images]/               # Image assets
@@ -454,6 +563,50 @@ ial-website-redesign/
 - Uses React Error Boundary API
 - Wraps entire application in root layout
 
+### 6. Dashboard Components
+
+**Location:** `components/dashboard/`
+
+**MetricCard Component:**
+- Displays key metrics with icons
+- Responsive design with hover effects
+- Supports different metric types
+
+**LineChart Component:**
+- Time series visualization using Recharts
+- Responsive container with responsive height
+- Customizable colors and styling
+
+**BarChart Component:**
+- Bar chart visualization for comparisons
+- Responsive design
+- Customizable data and colors
+
+**DataTable Component:**
+- Sortable and filterable data tables
+- Responsive with horizontal scroll
+- Clean, modern styling
+
+### 7. ProtectedRoute Component
+
+**Location:** `components/ProtectedRoute.tsx`
+
+**Features:**
+- Wraps protected pages (dashboard)
+- Verifies authentication token
+- Redirects to login if unauthorized
+- Shows loading state during verification
+
+### 8. ConditionalLayout Component
+
+**Location:** `components/ConditionalLayout.tsx`
+
+**Features:**
+- Conditionally renders Navbar/Footer/Chatbot
+- Excludes layout for dashboard/login pages
+- Prevents hydration mismatches
+- Client-side rendering for pathname detection
+
 ---
 
 ## Forms & API Routes
@@ -530,6 +683,241 @@ ACADEMY_TO_EMAIL=academy@inventallianceco.com,contact@patrickogbonna.com
 - Academy Form: 3 requests per 15 minutes
 
 **Note:** For production at scale, consider using Redis for distributed rate limiting.
+
+### Authentication API Routes
+
+**Login Route:** `/api/auth/login`
+
+**Features:**
+- Validates username and password
+- Supports both in-memory and database authentication
+- Generates JWT token on success
+- Sets HTTP-only cookie for session management
+- Returns error messages for invalid credentials
+
+**Logout Route:** `/api/auth/logout`
+
+**Features:**
+- Clears authentication cookie
+- Invalidates session
+- Returns success confirmation
+
+**Verify Route:** `/api/auth/verify`
+
+**Features:**
+- Verifies JWT token from cookie
+- Returns authentication status
+- Used for protected route checks
+
+### Analytics API Routes
+
+**Main Analytics Route:** `/api/analytics`
+
+**Query Parameters:**
+- `type`: Data type (overview, pageviews, pages, sources, sessions, system, system-stats, timeseries)
+- `startDate`: Unix timestamp for start date
+- `endDate`: Unix timestamp for end date (optional)
+- `interval`: Time series interval (hour, day, week)
+
+**Features:**
+- Requires authentication (JWT token)
+- Supports multiple data types
+- Date range filtering
+- Returns JSON data for dashboard consumption
+
+**Export Routes:**
+
+**CSV Export:** `/api/analytics/export/csv`
+- Generates CSV file with analytics data
+- Supports date range filtering
+- Downloads as CSV file
+
+**PDF Export:** `/api/analytics/export/pdf`
+- Generates PDF report with analytics data
+- Includes charts and tables
+- Custom font handling for PDFKit
+- Downloads as PDF file
+
+**Tracking Route:** `/api/analytics/track`
+- Manual page view tracking endpoint
+- Accepts POST requests with tracking data
+- Useful for client-side tracking
+
+**Seed Route:** `/api/analytics/seed`
+- Seeds sample analytics data
+- Useful for testing and development
+- Only available in non-production environments
+
+---
+
+## Admin Dashboard & Analytics
+
+### Overview
+
+The Admin Dashboard provides comprehensive website analytics and system performance monitoring. It requires authentication and offers real-time insights into user behavior and system health.
+
+### Authentication System
+
+**Implementation:**
+- JWT-based authentication with HTTP-only cookies
+- Supports both in-memory and database-backed authentication
+- Secure password hashing with bcryptjs
+- Session management with configurable duration
+
+**Authentication Flow:**
+1. User visits `/login` page
+2. Enters username and password
+3. POST request to `/api/auth/login`
+4. Server validates credentials (in-memory or database)
+5. JWT token generated and set as HTTP-only cookie
+6. Redirect to `/dashboard`
+7. Protected routes verify token on each request
+
+**Security Features:**
+- HTTP-only cookies prevent XSS attacks
+- Secure flag in production (HTTPS only)
+- Token expiration handling
+- Automatic logout on token expiry
+
+### Analytics Tracking
+
+**Middleware-Based Tracking:**
+- Automatic page view tracking via Next.js middleware
+- Runs in Edge Runtime for optimal performance
+- Tracks: path, IP address, user agent, referrer, session ID
+- System metrics: response time, status codes, request methods
+
+**Data Storage:**
+- **In-Memory Mode**: Fast, no database required (default)
+  - Stores data in Map data structures
+  - 30-day retention period
+  - Maximum 10,000 records per metric type
+- **Database Mode**: Persistent storage with PostgreSQL
+  - Full data persistence across restarts
+  - Scalable for production use
+  - Configurable via `USE_DATABASE` environment variable
+
+**Tracked Metrics:**
+- **Page Views**: Every page visit with timestamp
+- **Unique Visitors**: Distinct sessions identified by session ID
+- **Sessions**: User session tracking with activity timestamps
+- **Traffic Sources**: Referrer tracking (Direct, Search, Social, etc.)
+- **System Metrics**: API response times, error rates, status codes
+- **Time Series Data**: Page views over time (hourly, daily, weekly)
+
+### Dashboard Features
+
+**Overview Tab:**
+- Key metric cards: Page Views, Unique Visitors, Sessions, Avg Response Time
+- Page views over time (Line Chart)
+- Top 10 pages (Bar Chart)
+- System statistics: Total requests, error rate, status code distribution
+
+**Pages Tab:**
+- Bar chart of page views by path
+- Detailed data table with view counts
+- Sortable and filterable
+
+**Sources Tab:**
+- Traffic source breakdown (Bar Chart)
+- Data table with source statistics
+- Categorization: Direct, Search Engines, Social Media, Referrals
+
+**System Tab:**
+- System metrics cards: Total Requests, Avg Response Time, Error Rate
+- Status code distribution visualization
+- Performance monitoring
+
+**Date Range Filtering:**
+- Last 7 days
+- Last 30 days
+- Last 90 days
+- Custom date ranges via API
+
+**Report Export:**
+- CSV export for data analysis
+- PDF export with charts and tables
+- Date range filtering applied to exports
+
+### Responsive Design
+
+**Mobile Optimization:**
+- Responsive charts that adapt to screen size
+- Touch-friendly interface
+- Optimized table scrolling
+- Mobile-first navigation
+
+**Desktop Features:**
+- Full-width charts and tables
+- Hover effects and interactions
+- Keyboard navigation support
+
+---
+
+## Database Integration
+
+### PostgreSQL Support
+
+**Database Schema:**
+- **users**: User accounts with password hashing
+- **visitor_sessions**: Session tracking with metadata
+- **page_views**: Individual page view records
+- **system_metrics**: API performance and error tracking
+
+**Key Features:**
+- UUID primary keys for scalability
+- Automatic timestamps (created_at, updated_at)
+- Foreign key relationships
+- Comprehensive indexes for performance
+- Data retention policies (30 days default)
+
+### Database Configuration
+
+**Environment Variables:**
+```env
+USE_DATABASE=true
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=ial_analytics
+DB_USER=postgres
+DB_PASSWORD=your_password
+DB_SSL=false  # Set to true for production
+```
+
+### Migration System
+
+**Migration Scripts:**
+- `database/migrations/001_initial_schema.sql`: Initial database setup
+- `database/migrations/002_add_user_email_index.sql`: Performance optimization
+- `database/schema.sql`: Complete schema definition
+- `database/seed.sql`: Sample data seeding
+
+### Connection Management
+
+**Connection Pooling:**
+- Configurable connection pool size
+- Connection timeout handling
+- Automatic retry logic
+- Health check utilities
+
+**Error Handling:**
+- Graceful fallback to in-memory mode
+- Connection error logging
+- User-friendly error messages
+- Automatic reconnection
+
+### Data Persistence
+
+**Benefits:**
+- Data survives server restarts
+- Scalable for high-traffic sites
+- Historical data analysis
+- Production-ready architecture
+
+**Fallback Mode:**
+- If database unavailable, falls back to in-memory storage
+- Seamless transition between modes
+- No data loss during transition
 
 ---
 
@@ -666,6 +1054,20 @@ ACADEMY_TO_EMAIL=academy@inventallianceco.com
 ```env
 NEXT_PUBLIC_SITE_URL=https://www.inventallianceco.com
 NODE_ENV=production
+
+# Database Configuration (optional)
+USE_DATABASE=false  # Set to true to enable PostgreSQL
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=ial_analytics
+DB_USER=postgres
+DB_PASSWORD=your_password
+DB_SSL=false
+
+# Authentication (optional, defaults provided)
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin123
+JWT_SECRET=your-random-secret-key-change-in-production
 ```
 
 ### Hosting Recommendations
@@ -682,6 +1084,7 @@ NODE_ENV=production
 - SMTP access for email sending
 - HTTPS certificate (Let's Encrypt recommended)
 - Domain name with DNS configuration
+- PostgreSQL (optional, for database mode)
 
 ---
 
@@ -723,12 +1126,27 @@ NODE_ENV=production
 - Environment variables for sensitive credentials
 - Never commit credentials to version control
 
-### 4. Error Handling
+### 4. Authentication Security
+
+**JWT Tokens:**
+- HTTP-only cookies prevent XSS attacks
+- Secure flag in production (HTTPS only)
+- Token expiration and refresh handling
+- Server-side token verification
+
+**Password Security:**
+- bcryptjs hashing with salt rounds
+- Never store plain-text passwords
+- Environment variable configuration
+- Default credentials warning removed from UI
+
+### 5. Error Handling
 
 **Security Considerations:**
 - Generic error messages (don't expose system details)
 - Error logging for debugging (server-side only)
 - User-friendly error pages
+- Error boundaries prevent app crashes
 
 ---
 
@@ -773,9 +1191,11 @@ NODE_ENV=production
 - [ ] Blog post management interface
 
 **2. Analytics**
-- [ ] Google Analytics integration
-- [ ] Form submission tracking
-- [ ] User behavior analytics
+- [x] **Built-in analytics dashboard** ✅
+- [x] **Real-time tracking** ✅
+- [x] **Report export (CSV/PDF)** ✅
+- [ ] Google Analytics integration (optional addition)
+- [ ] Form submission tracking in analytics
 
 **3. Performance**
 - [ ] Font optimization with `next/font`
@@ -792,9 +1212,12 @@ NODE_ENV=production
 
 **5. Infrastructure**
 - [ ] Redis for distributed rate limiting
-- [ ] Database for form submissions
+- [x] **PostgreSQL database integration** ✅
+- [x] **Database-backed authentication** ✅
+- [x] **Database-backed analytics** ✅
 - [ ] Email queue system
 - [ ] Monitoring and alerting
+- [ ] Database backup automation
 
 **6. Testing**
 - [ ] Unit tests (Jest)
@@ -845,6 +1268,7 @@ The website links to the following external subdomains (preserved from original 
 ## Document Maintenance
 
 **Version History:**
+- **v2.0** (January 2025): Added Admin Dashboard, Analytics System, Database Integration, Authentication System
 - **v1.0** (December 2024): Initial comprehensive documentation
 
 **Update Frequency:**

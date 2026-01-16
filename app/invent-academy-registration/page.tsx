@@ -1,7 +1,13 @@
 'use client';
 
 import Footer from '@/components/Footer';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import AccessibleFormField from '@/components/AccessibleFormField';
+import TrustSignals from '@/components/TrustSignals';
+import CTAButton from '@/components/CTAButton';
+import MultiStepAcademyForm from '@/components/MultiStepAcademyForm';
+import { FEATURE_ACCESSIBILITY_UPGRADES, FEATURE_ACADEMY_MULTI_STEP_FORM } from '@/lib/feature-flags';
+import { trackGoal, trackFunnelStep, GoalType, FunnelName, FunnelStep } from '@/lib/analytics-goals';
 
 interface FormErrors {
   name?: string;
@@ -26,6 +32,18 @@ export default function InventAcademyRegistration() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  // Track funnel step on page load
+  useEffect(() => {
+    trackFunnelStep(FunnelName.ACADEMY_REGISTRATION, FunnelStep.PAGE_LOAD);
+  }, []);
+
+  // Track funnel step when form interaction starts
+  useEffect(() => {
+    if (formData.name || formData.email || formData.phone || formData.ageRange || formData.stream) {
+      trackFunnelStep(FunnelName.ACADEMY_REGISTRATION, FunnelStep.FORM_START);
+    }
+  }, [formData.name, formData.email, formData.phone, formData.ageRange, formData.stream]);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -62,10 +80,31 @@ export default function InventAcademyRegistration() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Helper function to get CSRF token from API endpoint
+  // (Cookie is HttpOnly, so we can't read it directly from JavaScript)
+  const getCSRFToken = async (): Promise<string | null> => {
+    try {
+      const response = await fetch('/api/csrf-token');
+      if (response.ok) {
+        const data = await response.json();
+        return data.token || null;
+      }
+    } catch (error) {
+      console.error('Failed to fetch CSRF token:', error);
+    }
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitStatus(null);
     setErrors({});
+
+    // Track form submit attempt
+    trackFunnelStep(FunnelName.ACADEMY_REGISTRATION, FunnelStep.FORM_SUBMIT, {
+      hasStream: !!formData.stream,
+      hasAgeRange: !!formData.ageRange,
+    });
 
     if (!validateForm()) {
       return;
@@ -74,11 +113,19 @@ export default function InventAcademyRegistration() {
     setIsSubmitting(true);
 
     try {
+      const csrfToken = await getCSRFToken();
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      
+      // Include CSRF token in header if available
+      if (csrfToken) {
+        headers['X-CSRF-Token'] = csrfToken;
+      }
+
       const response = await fetch('/api/academy-registration', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(formData),
       });
 
@@ -92,6 +139,19 @@ export default function InventAcademyRegistration() {
         type: 'success',
         message: data.message || 'Thank you for your registration! We will contact you soon with further details.',
       });
+      
+      // Track successful goal conversion (no PII in metadata)
+      trackGoal(GoalType.ACADEMY_REGISTRATION, {
+        stream: formData.stream || 'unknown',
+        ageRange: formData.ageRange || 'unknown',
+        hasMessage: !!formData.message,
+      });
+      
+      // Track funnel success step
+      trackFunnelStep(FunnelName.ACADEMY_REGISTRATION, FunnelStep.SUCCESS, {
+        stream: formData.stream || 'unknown',
+      });
+      
       setFormData({ name: '', email: '', phone: '', ageRange: '', stream: '', message: '', company: '' });
     } catch (error) {
       setSubmitStatus({
@@ -120,7 +180,7 @@ export default function InventAcademyRegistration() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800">
-      <main className="flex-grow py-12">
+      <main id="main-content" tabIndex={-1} className="flex-grow py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-extrabold text-white mb-8 text-center text-elevated-strong">
             Invent Academy Registration
@@ -154,68 +214,163 @@ export default function InventAcademyRegistration() {
           )}
 
           <div className="glass-dark rounded-lg shadow-neon-purple p-8 border border-purple-500/30">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Honeypot field - hidden from users */}
-              <div className="hidden" aria-hidden="true">
-                <label htmlFor="company">Company</label>
-                <input
-                  type="text"
-                  id="company"
-                  name="company"
-                  tabIndex={-1}
-                  autoComplete="off"
-                  value={formData.company}
-                  onChange={handleChange}
-                />
-              </div>
+            {FEATURE_ACADEMY_MULTI_STEP_FORM ? (
+              <MultiStepAcademyForm
+                onSubmit={async (data) => {
+                  setSubmitStatus(null);
+                  setErrors({});
+                  
+                  // Track form submit attempt
+                  trackFunnelStep(FunnelName.ACADEMY_REGISTRATION, FunnelStep.FORM_SUBMIT, {
+                    hasStream: !!data.stream,
+                    hasAgeRange: !!data.ageRange,
+                  });
+                  
+                  setIsSubmitting(true);
 
-              <div>
-                <label htmlFor="name" className="block text-sm font-bold text-white mb-2 text-elevated">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-md bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-purple focus:border-neon-purple ${
-                    errors.name ? 'border-red-400' : 'border-purple-500/50'
-                  }`}
-                  aria-invalid={errors.name ? 'true' : 'false'}
-                  aria-describedby={errors.name ? 'name-error' : undefined}
-                />
-                {errors.name && (
-                  <p id="name-error" className="mt-1 text-sm text-red-300 font-semibold" role="alert">
-                    {errors.name}
-                  </p>
-                )}
-              </div>
+                  try {
+                    const csrfToken = await getCSRFToken();
+                    const headers: Record<string, string> = {
+                      'Content-Type': 'application/json',
+                    };
+                    
+                    if (csrfToken) {
+                      headers['X-CSRF-Token'] = csrfToken;
+                    }
 
-              <div>
-                <label htmlFor="email" className="block text-sm font-bold text-white mb-2 text-elevated">
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-md bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-purple focus:border-neon-purple ${
-                    errors.email ? 'border-red-400' : 'border-purple-500/50'
-                  }`}
-                  aria-invalid={errors.email ? 'true' : 'false'}
-                  aria-describedby={errors.email ? 'email-error' : undefined}
-                />
-                {errors.email && (
-                  <p id="email-error" className="mt-1 text-sm text-red-300 font-semibold" role="alert">
-                    {errors.email}
-                  </p>
-                )}
-              </div>
+                    const response = await fetch('/api/academy-registration', {
+                      method: 'POST',
+                      headers,
+                      body: JSON.stringify(data),
+                    });
+
+                    const responseData = await response.json();
+
+                    if (!response.ok) {
+                      throw new Error(responseData.error || 'Failed to submit registration');
+                    }
+
+                    setSubmitStatus({
+                      type: 'success',
+                      message: responseData.message || 'Thank you for your registration! We will contact you soon with further details.',
+                    });
+                    
+                    // Track successful goal conversion (no PII in metadata)
+                    trackGoal(GoalType.ACADEMY_REGISTRATION, {
+                      stream: data.stream || 'unknown',
+                      ageRange: data.ageRange || 'unknown',
+                      hasMessage: !!data.message,
+                    });
+                    
+                    // Track funnel success step
+                    trackFunnelStep(FunnelName.ACADEMY_REGISTRATION, FunnelStep.SUCCESS, {
+                      stream: data.stream || 'unknown',
+                    });
+                  } catch (error) {
+                    setSubmitStatus({
+                      type: 'error',
+                      message: error instanceof Error ? error.message : 'An error occurred. Please try again later.',
+                    });
+                  } finally {
+                    setIsSubmitting(false);
+                  }
+                }}
+                isSubmitting={isSubmitting}
+              />
+            ) : (
+              <>
+                <TrustSignals />
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Honeypot field - hidden from users */}
+                  <div className="hidden" aria-hidden="true">
+                    <label htmlFor="company">Company</label>
+                    <input
+                      type="text"
+                      id="company"
+                      name="company"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={formData.company}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+              {FEATURE_ACCESSIBILITY_UPGRADES ? (
+                <>
+                  <AccessibleFormField
+                    id="name"
+                    name="name"
+                    label="Full Name"
+                    type="text"
+                    value={formData.name}
+                    onChange={handleChange}
+                    error={errors.name}
+                    required={true}
+                    className="focus:ring-neon-purple focus:border-neon-purple"
+                  />
+                  <AccessibleFormField
+                    id="email"
+                    name="email"
+                    label="Email Address"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    error={errors.email}
+                    required={true}
+                    className="focus:ring-neon-purple focus:border-neon-purple"
+                  />
+                </>
+              ) : (
+                <>
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-bold text-white mb-2 text-elevated">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      required
+                      value={formData.name}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-2 border rounded-md bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-purple focus:border-neon-purple ${
+                        errors.name ? 'border-red-400' : 'border-purple-500/50'
+                      }`}
+                      aria-invalid={errors.name ? 'true' : 'false'}
+                      aria-describedby={errors.name ? 'name-error' : undefined}
+                    />
+                    {errors.name && (
+                      <p id="name-error" className="mt-1 text-sm text-red-300 font-semibold" role="alert">
+                        {errors.name}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-bold text-white mb-2 text-elevated">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      required
+                      value={formData.email}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-2 border rounded-md bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-purple focus:border-neon-purple ${
+                        errors.email ? 'border-red-400' : 'border-purple-500/50'
+                      }`}
+                      aria-invalid={errors.email ? 'true' : 'false'}
+                      aria-describedby={errors.email ? 'email-error' : undefined}
+                    />
+                    {errors.email && (
+                      <p id="email-error" className="mt-1 text-sm text-red-300 font-semibold" role="alert">
+                        {errors.email}
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
 
               <div>
                 <label htmlFor="phone" className="block text-sm font-bold text-white mb-2 text-elevated">
@@ -299,19 +454,32 @@ export default function InventAcademyRegistration() {
                 )}
               </div>
 
-              <div>
-                <label htmlFor="message" className="block text-sm font-bold text-white mb-2 text-elevated">
-                  Additional Information
-                </label>
-                <textarea
+              {FEATURE_ACCESSIBILITY_UPGRADES ? (
+                <AccessibleFormField
                   id="message"
                   name="message"
-                  rows={4}
+                  label="Additional Information"
+                  type="textarea"
                   value={formData.message}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-purple-500/50 rounded-md bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-purple focus:border-neon-purple"
+                  rows={4}
+                  className="focus:ring-neon-purple focus:border-neon-purple"
                 />
-              </div>
+              ) : (
+                <div>
+                  <label htmlFor="message" className="block text-sm font-bold text-white mb-2 text-elevated">
+                    Additional Information
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={4}
+                    value={formData.message}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-purple-500/50 rounded-md bg-white/10 text-white placeholder-gray-400 focus:ring-2 focus:ring-neon-purple focus:border-neon-purple"
+                  />
+                </div>
+              )}
 
               {errors.general && (
                 <div className="p-4 bg-red-50 border border-red-200 rounded-md">
@@ -321,14 +489,17 @@ export default function InventAcademyRegistration() {
                 </div>
               )}
 
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-blue-600 text-white py-3 px-6 rounded-md font-semibold hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? 'Submitting...' : 'Submit Registration'}
-              </button>
-            </form>
+                  <CTAButton
+                    type="submit"
+                    variant="success"
+                    loading={isSubmitting}
+                    disabled={isSubmitting}
+                  >
+                    Get Started with Training
+                  </CTAButton>
+                </form>
+              </>
+            )}
           </div>
         </div>
       </main>

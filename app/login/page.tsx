@@ -44,17 +44,40 @@ export default function LoginPage() {
     checkAuth();
   }, [router, isMounted]);
 
+  // Helper function to get CSRF token from API endpoint
+  // (Cookie is HttpOnly, so we can't read it directly from JavaScript)
+  const getCSRFToken = async (): Promise<string | null> => {
+    try {
+      const response = await fetch('/api/csrf-token');
+      if (response.ok) {
+        const data = await response.json();
+        return data.token || null;
+      }
+    } catch (error) {
+      console.error('Failed to fetch CSRF token:', error);
+    }
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
+      const csrfToken = await getCSRFToken();
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      
+      // Include CSRF token in header if available
+      if (csrfToken) {
+        headers['X-CSRF-Token'] = csrfToken;
+      }
+
       const response = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({ username, password }),
       });
 

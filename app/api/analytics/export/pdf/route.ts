@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken, verifyTokenWithSession } from '@/lib/auth-wrapper';
-import {
-  getPageViews,
-  getPageViewsByPath,
-  getTrafficSources,
-  getSessions,
-  getSystemMetrics,
-  getSystemStats,
-  getTimeSeriesData,
-  seedAnalyticsData,
-} from '@/lib/analytics-wrapper';
+import { FEATURE_MONITORING_METRICS } from '@/lib/feature-flags';
+
+// Force dynamic rendering to prevent build-time analysis issues
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+export const runtime = 'nodejs';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
 
 async function requireAuth(request: NextRequest): Promise<boolean> {
+  // Dynamic imports to prevent build-time analysis issues
+  const { verifyToken, verifyTokenWithSession } = await import('@/lib/auth-wrapper');
+  
   const token = request.cookies.get('auth-token')?.value;
   if (!token) return false;
   
@@ -27,16 +27,15 @@ function formatDate(timestamp: number): string {
 }
 
 export async function GET(request: NextRequest) {
+  const startTime = Date.now();
+  
   // Check authentication
   if (!(await requireAuth(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // Seed data if empty (for development/testing) - only for in-memory mode
-  // This ensures export routes have data to export
-  if (process.env.USE_DATABASE !== 'true') {
-    await seedAnalyticsData();
-  }
+  // Note: Export routes should export existing data, not seed new data
+  // Seeding should be done via /api/analytics/seed or the main analytics route
 
   const { searchParams } = new URL(request.url);
   const type = searchParams.get('type') || 'overview';
@@ -51,6 +50,17 @@ export async function GET(request: NextRequest) {
     : 'All Time';
 
   try {
+    // Dynamic imports to prevent build-time analysis issues
+    const {
+      getPageViews,
+      getPageViewsByPath,
+      getTrafficSources,
+      getSessions,
+      getSystemMetrics,
+      getSystemStats,
+      getTimeSeriesData,
+    } = await import('@/lib/analytics-wrapper');
+    
     // Fetch all data first before creating PDF
     let data: any = {};
     
@@ -368,6 +378,22 @@ export async function GET(request: NextRequest) {
     const timestamp = new Date().toISOString().split('T')[0];
     const filename = `analytics-${type}-${timestamp}.pdf`;
 
+    const duration = Date.now() - startTime;
+    // Performance tracking (optional, non-blocking)
+    if (FEATURE_MONITORING_METRICS) {
+      try {
+        const { trackPerformanceMetric } = await import('@/lib/monitoring');
+        trackPerformanceMetric('export_pdf_duration', duration, 'ms', {
+          type,
+          success: true,
+          contentLength: pdfBuffer.length,
+        });
+      } catch (error) {
+        // Silently fail - monitoring should not break exports
+        console.warn('Failed to track performance metric:', error);
+      }
+    }
+
     return new NextResponse(pdfBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
@@ -376,6 +402,22 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
+    const duration = Date.now() - startTime;
+    // Performance tracking (optional, non-blocking)
+    if (FEATURE_MONITORING_METRICS) {
+      try {
+        const { trackPerformanceMetric } = await import('@/lib/monitoring');
+        trackPerformanceMetric('export_pdf_duration', duration, 'ms', {
+          type,
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      } catch (trackError) {
+        // Silently fail - monitoring should not break error handling
+        console.warn('Failed to track performance metric:', trackError);
+      }
+    }
+    
     console.error('PDF export error:', error);
     console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     console.error('Error details:', {

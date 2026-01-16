@@ -97,7 +97,7 @@ export default function Home() {
     <>
       <StructuredData data={organizationSchema} />
       <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800">
-        <main className="flex-grow">
+        <main id="main-content" tabIndex={-1} className="flex-grow">
         {/* Hero Section */}
         <section className="relative bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 py-20 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-indigo-500/10 to-cyan-500/10"></div>

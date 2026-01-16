@@ -105,6 +105,12 @@ export default function Footer() {
                   <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
                 </Link>
               </li>
+              <li>
+                <Link href="/privacy-policy" className="text-sm text-white hover:text-neon-cyan transition-colors duration-300 inline-flex items-center gap-1 group font-semibold">
+                  Privacy Policy
+                  <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

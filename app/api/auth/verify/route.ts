@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken, verifyTokenWithSession } from '@/lib/auth-wrapper';
+
+// Force dynamic rendering to prevent build-time analysis issues
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+export const runtime = 'nodejs';
+export const revalidate = 0;
+export const fetchCache = 'force-no-store';
 
 export async function GET(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value;
@@ -8,6 +14,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ authenticated: false }, { status: 401 });
   }
 
+  // Dynamic imports to prevent build-time analysis issues
+  const { verifyToken, verifyTokenWithSession } = await import('@/lib/auth-wrapper');
+  
   // Use verifyTokenWithSession if database is enabled, otherwise use verifyToken
   const useDatabase = process.env.USE_DATABASE === 'true';
   const user = useDatabase 

@@ -2,9 +2,29 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { query, queryOne, transaction } from './db';
+import { getJWTSecret } from './jwt-config';
+import { logger } from './secure-logger';
+import { encryptPII, decryptPII } from './data-protection';
+import { FEATURE_PII_EMAIL_ENCRYPTION } from './feature-flags';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Initialize JWT secret (will throw in production if not configured properly)
+let JWT_SECRET: string;
+try {
+  JWT_SECRET = getJWTSecret();
+} catch (error) {
+  // In production, fail fast with clear error message
+  if (isProduction) {
+    logger.error('JWT configuration error', error instanceof Error ? error : new Error(String(error)));
+    throw error;
+  }
+  // In development, use fallback but log the error
+  logger.error('Error loading JWT secret, using fallback', error instanceof Error ? error : new Error(String(error)));
+  JWT_SECRET = 'dev-fallback-secret-not-for-production-use';
+}
 
 export interface AuthUser {
   id: string;
@@ -36,21 +56,18 @@ export async function login(
   password: string
 ): Promise<{ success: boolean; token?: string; error?: string }> {
   try {
-    // Validate JWT_SECRET is available
-    if (!JWT_SECRET || JWT_SECRET === 'your-secret-key-change-in-production') {
-      console.error('JWT_SECRET is not properly configured');
-      return { success: false, error: 'Authentication service configuration error' };
-    }
+    // JWT_SECRET is already validated at module load time
+    // Token signing/verifying behavior remains the same (backward compatible)
 
     // Find user in database
-    let user: UserWithPassword | null;
+    let user: (UserWithPassword & { email_encrypted?: string }) | null;
     try {
-      user = await queryOne<UserWithPassword>(
-        'SELECT id, username, password_hash, email, role, is_active FROM users WHERE username = $1',
+      user = await queryOne<UserWithPassword & { email_encrypted?: string }>(
+        'SELECT id, username, password_hash, email, email_encrypted, role, is_active FROM users WHERE username = $1',
         [username]
       );
     } catch (dbError: any) {
-      console.error('Database query error:', dbError);
+      logger.error('Database query error', dbError instanceof Error ? dbError : new Error(String(dbError)));
       // If database connection fails, provide helpful error
       if (dbError.message?.includes('connect') || dbError.code === 'ECONNREFUSED') {
         return { 
@@ -81,12 +98,22 @@ export async function login(
       [user.id]
     );
 
+    // Decrypt email if encrypted and feature is enabled
+    let email = user.email;
+    if (FEATURE_PII_EMAIL_ENCRYPTION && user.email_encrypted) {
+      const decryptedEmail = decryptPII(user.email_encrypted);
+      if (decryptedEmail) {
+        email = decryptedEmail;
+      }
+      // Fallback to plaintext email if decryption fails (backward compatibility)
+    }
+
     // Generate JWT token
     const token = jwt.sign(
       {
         id: user.id,
         username: user.username,
-        email: user.email,
+        email: email,
         role: user.role,
         loginTime: Date.now(),
       },
@@ -106,7 +133,7 @@ export async function login(
 
     return { success: true, token };
   } catch (error) {
-    console.error('Login function error:', error);
+    logger.error('Login function error', error instanceof Error ? error : new Error(String(error)), { username }); // Never log password
     return { success: false, error: 'Failed to process login request' };
   }
 }
@@ -144,7 +171,7 @@ export async function verifyTokenWithSession(token: string): Promise<AuthUser | 
 
     return decoded;
   } catch (error) {
-    console.error('Token verification error:', error);
+    logger.error('Token verification error', error instanceof Error ? error : new Error(String(error)));
     return null;
   }
 }
@@ -163,7 +190,7 @@ export async function logout(token: string): Promise<void> {
       [decoded.id]
     );
   } catch (error) {
-    console.error('Logout error:', error);
+    logger.error('Logout error', error instanceof Error ? error : new Error(String(error)));
   }
 }
 
@@ -177,11 +204,23 @@ export async function createUser(
   try {
     const passwordHash = await bcrypt.hash(password, 10);
 
+    // Encrypt email if feature is enabled
+    let emailEncrypted: string | null = null;
+    if (FEATURE_PII_EMAIL_ENCRYPTION && email) {
+      try {
+        emailEncrypted = encryptPII(email);
+      } catch (error) {
+        logger.error('Failed to encrypt email during user creation', error instanceof Error ? error : new Error(String(error)));
+        // Continue with plaintext email if encryption fails (backward compatibility)
+      }
+    }
+
+    // Insert user with both email and email_encrypted (for transition period)
     const result = await query<{ id: string }>(
-      `INSERT INTO users (username, password_hash, email, role)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO users (username, password_hash, email, email_encrypted, role)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING id`,
-      [username, passwordHash, email || null, role]
+      [username, passwordHash, email || null, emailEncrypted, role]
     );
 
     if (result.length === 0) {
@@ -193,7 +232,7 @@ export async function createUser(
     if (error.code === '23505') { // Unique violation
       return { success: false, error: 'Username already exists' };
     }
-    console.error('Create user error:', error);
+    logger.error('Create user error', error instanceof Error ? error : new Error(String(error)), { username }); // Never log password
     return { success: false, error: 'Failed to create user' };
   }
 }
@@ -227,7 +266,7 @@ export async function updatePassword(
 
     return { success: true };
   } catch (error) {
-    console.error('Update password error:', error);
+    logger.error('Update password error', error instanceof Error ? error : new Error(String(error)), { userId }); // Never log password
     return { success: false, error: 'Failed to update password' };
   }
 }
@@ -237,7 +276,7 @@ export async function cleanupExpiredSessions(): Promise<void> {
   try {
     await query('DELETE FROM user_sessions WHERE expires_at < CURRENT_TIMESTAMP');
   } catch (error) {
-    console.error('Cleanup sessions error:', error);
+    logger.error('Cleanup sessions error', error instanceof Error ? error : new Error(String(error)));
   }
 }
 

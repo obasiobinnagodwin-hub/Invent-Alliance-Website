@@ -158,6 +158,19 @@ ACADEMY_TO_EMAIL=academy@inventallianceco.com,contact@patrickogbonna.com  # Opti
 - Safari (latest)
 - Edge (latest)
 
+## GDPR Compliance Documentation
+
+GDPR compliance documentation and templates are available in the `docs/gdpr/` directory:
+
+- **[Third-Party DPAs Checklist](docs/gdpr/third-party-dpas.md)** - Checklists for evaluating Data Processing Agreements with third-party providers (SMTP, hosting, Google Maps)
+- **[DPIA Template](docs/gdpr/dpia.md)** - Data Protection Impact Assessment template with examples for current processing activities
+- **[GDPR Documentation Index](docs/gdpr/README.md)** - Overview of all GDPR documentation
+
+See also:
+- **Privacy Policy:** `/privacy-policy` (live page)
+- **DSAR Portal:** `/data-subject-request` (when `FEATURE_DSAR_PORTAL=true`)
+- **ROPA Register:** Available via `/api/admin/processing-activities` (when `FEATURE_ROPA_ENDPOINT=true`)
+
 ## License
 
 Copyright © Invent Alliance Limited. All rights reserved.

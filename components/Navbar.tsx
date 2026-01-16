@@ -2,12 +2,71 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { FEATURE_ACCESSIBILITY_UPGRADES } from '@/lib/feature-flags';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement>(null);
+  const lastLinkRef = useRef<HTMLAnchorElement>(null);
+
+  // Close menu on Escape key
+  useEffect(() => {
+    if (!FEATURE_ACCESSIBILITY_UPGRADES) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMenuOpen) {
+        setIsMenuOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isMenuOpen]);
+
+  // Focus trap when menu is open
+  useEffect(() => {
+    if (!FEATURE_ACCESSIBILITY_UPGRADES || !isMenuOpen) return;
+
+    const handleTabKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+
+      const focusableElements = menuRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      
+      if (!focusableElements || focusableElements.length === 0) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        // Shift + Tab
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        // Tab
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleTabKey);
+    
+    // Focus first link when menu opens
+    firstLinkRef.current?.focus();
+
+    return () => document.removeEventListener('keydown', handleTabKey);
+  }, [isMenuOpen]);
 
   return (
     <nav className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 backdrop-blur-md shadow-xl sticky top-0 z-50 border-b border-slate-700/60">
@@ -165,10 +224,12 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
+            ref={menuButtonRef}
             className="lg:hidden p-2 text-white hover:text-blue-300 transition-all duration-300"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
+            aria-label={FEATURE_ACCESSIBILITY_UPGRADES ? (isMenuOpen ? 'Close navigation menu' : 'Open navigation menu') : 'Toggle menu'}
             aria-expanded={isMenuOpen}
+            aria-controls={FEATURE_ACCESSIBILITY_UPGRADES ? 'mobile-menu' : undefined}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMenuOpen ? (
@@ -182,11 +243,18 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-slate-600/40 bg-slate-800/98 backdrop-blur-md">
+          <div
+            ref={menuRef}
+            id={FEATURE_ACCESSIBILITY_UPGRADES ? 'mobile-menu' : undefined}
+            className="lg:hidden py-4 border-t border-slate-600/40 bg-slate-800/98 backdrop-blur-md"
+            role={FEATURE_ACCESSIBILITY_UPGRADES ? 'menu' : undefined}
+          >
             <Link
+              ref={firstLinkRef}
               href="/"
               className="block px-4 py-2 text-white hover:text-blue-300 hover:bg-slate-700/50 transition-all duration-300 font-bold text-elevated"
               onClick={() => setIsMenuOpen(false)}
+              role={FEATURE_ACCESSIBILITY_UPGRADES ? 'menuitem' : undefined}
             >
               Home
             </Link>
@@ -233,9 +301,11 @@ export default function Navbar() {
               Invent Academy
             </Link>
             <Link
+              ref={lastLinkRef}
               href="/contacts"
               className="block px-4 py-2 text-white hover:text-blue-300 hover:bg-slate-700/50 transition-all duration-300 font-bold text-elevated"
               onClick={() => setIsMenuOpen(false)}
+              role={FEATURE_ACCESSIBILITY_UPGRADES ? 'menuitem' : undefined}
             >
               Contact
             </Link>
@@ -247,6 +317,7 @@ export default function Navbar() {
                 className="block px-4 py-2 bg-blue-600/90 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all duration-300 flex items-center gap-2"
                 onClick={() => setIsMenuOpen(false)}
                 title="Admin Portal"
+                role={FEATURE_ACCESSIBILITY_UPGRADES ? 'menuitem' : undefined}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
