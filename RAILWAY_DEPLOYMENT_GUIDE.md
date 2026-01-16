@@ -309,22 +309,50 @@ FEATURE_ACADEMY_MULTI_STEP_FORM=false  # Optional
 
 ### Step 2: Configure Database Connection
 
-1. In Railway project → Service → **Variables**, add:
+**Option A: Use DATABASE_URL (Recommended for Railway)**
+
+Railway automatically provides a `DATABASE_URL` environment variable when you create a PostgreSQL service. This is the easiest method:
+
+1. In Railway project → PostgreSQL Database service → **Variables** tab
+2. Copy the `DATABASE_URL` value (it should already be there automatically)
+3. In Railway project → Your Application Service → **Variables** tab, add:
    ```env
    USE_DATABASE=true
-   DATABASE_URL=<Railway PostgreSQL Connection URL>
+   DATABASE_URL=<Railway automatically provides this - copy from PostgreSQL service>
    ```
 
-   Or set individual variables:
+**Option B: Use Individual Variables (Alternative)**
+
+If you prefer individual variables or DATABASE_URL is not available:
+
+1. In Railway project → PostgreSQL Database service → **Variables** tab, note these values:
+   - `PGHOST` or `DB_HOST` = hostname
+   - `PGPORT` or `DB_PORT` = port (usually 5432)
+   - `PGDATABASE` or `DB_NAME` = database name (usually "railway")
+   - `PGUSER` or `DB_USER` = username (usually "postgres")
+   - `PGPASSWORD` or `DB_PASSWORD` = password
+
+2. In Railway project → Your Application Service → **Variables** tab, add:
    ```env
    USE_DATABASE=true
-   DB_HOST=<database hostname>
+   DB_HOST=<from PostgreSQL service variables>
    DB_PORT=5432
    DB_NAME=railway
    DB_USER=postgres
-   DB_PASSWORD=<database password>
+   DB_PASSWORD=<from PostgreSQL service variables>
    DB_SSL=true
    ```
+
+**Important Notes:**
+- Railway automatically provides `DATABASE_URL` - use Option A if possible
+- Railway's `DATABASE_URL` should already include SSL parameters
+- If `DATABASE_URL` doesn't work, check that it includes `?sslmode=require` or similar SSL parameters
+- If using individual variables, `DB_SSL=true` is required for Railway PostgreSQL
+- **Troubleshooting**: If you get AggregateError, verify:
+  1. `DATABASE_URL` is copied correctly (no extra spaces or quotes)
+  2. Database service is running and active in Railway
+  3. Both services (app and database) are in the same Railway project
+  4. Try adding `?sslmode=require` to DATABASE_URL if SSL errors occur
 
 ### Step 3: Run Database Migrations
 
@@ -647,15 +675,57 @@ To manually trigger deployment:
 
 #### 4. Database Connection Fails
 
-**Error**: Cannot connect to database
+**Error**: "Database connection failed. Please check your database configuration or set USE_DATABASE=false to use in-memory authentication."
 
 **Solutions**:
-- Verify `DATABASE_URL` or individual DB variables are correct
-- Check `DB_SSL=true` if using Railway PostgreSQL
-- Verify database service is running in Railway
-- Check network connectivity
-- Verify `USE_DATABASE=true` is set
-- Check database migrations have been run
+
+**Quick Fix (Use In-Memory Auth):**
+- Set `USE_DATABASE=false` in Railway Variables (temporary, for testing)
+- This allows login without database (uses default admin/admin123)
+
+**Proper Fix (Use Database):**
+
+1. **Check DATABASE_URL is set:**
+   - Go to Railway → PostgreSQL Database service → **Variables** tab
+   - Copy the `DATABASE_URL` value (should be automatically provided)
+   - Go to Railway → Your Application Service → **Variables** tab
+   - Add: `USE_DATABASE=true` and `DATABASE_URL=<copied value>`
+
+2. **If DATABASE_URL is not available, use individual variables:**
+   - From PostgreSQL service Variables, copy:
+     - `PGHOST` → Set as `DB_HOST` in your app
+     - `PGPORT` → Set as `DB_PORT` (usually 5432)
+     - `PGDATABASE` → Set as `DB_NAME` (usually "railway")
+     - `PGUSER` → Set as `DB_USER` (usually "postgres")
+     - `PGPASSWORD` → Set as `DB_PASSWORD`
+   - Also set: `DB_SSL=true` (required for Railway PostgreSQL)
+
+3. **Verify database service is running:**
+   - Railway → PostgreSQL Database service → Check status is "Active"
+
+4. **Run database migrations:**
+   - See "Step 3: Run Database Migrations" section above
+   - Migrations must be run before login will work
+
+5. **Check Railway logs:**
+   - Railway → Your Application Service → **Logs** tab
+   - Look for database connection errors
+   - Common errors:
+     - **"AggregateError"** → Multiple connection failures. Check:
+       - `DATABASE_URL` is set correctly (no extra spaces/quotes)
+       - Database service is running and active
+       - Both services are in same Railway project
+       - Try appending `?sslmode=require` to DATABASE_URL if SSL issues
+     - **"ECONNREFUSED"** → Database service not running or wrong host/port
+     - **"password authentication failed"** → Wrong DB_USER or DB_PASSWORD
+     - **"database does not exist"** → Wrong DB_NAME or migrations not run
+     - **"relation 'users' does not exist"** → Migrations not run
+     - **"SSL/TLS connection" errors** → Add `?sslmode=require` to DATABASE_URL or set `DB_SSL=true`
+
+6. **Test database connection:**
+   ```bash
+   railway run bash -c "psql \$DATABASE_URL -c 'SELECT NOW();'"
+   ```
 
 #### 5. SMTP Email Fails
 
