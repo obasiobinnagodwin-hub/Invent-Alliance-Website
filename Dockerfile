@@ -22,8 +22,8 @@ RUN mkdir -p public
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
 
-# Build the application
-RUN npm run build
+# Build the application with better error output
+RUN npm run build || (echo "Build failed! Check errors above." && exit 1)
 
 # Stage 3: Runner
 FROM node:20-alpine AS runner

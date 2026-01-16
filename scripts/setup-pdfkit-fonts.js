@@ -59,8 +59,12 @@ function setupPDFKitFonts() {
   } catch (error) {
     console.error('Error setting up PDFKit fonts:', error.message);
     console.log('PDFKit should still work with embedded fonts.');
+    // Don't exit with error code - this is non-critical
+    // PDFKit will use embedded fonts if font files aren't available
   }
 }
 
 setupPDFKitFonts();
 
+// Exit successfully even if fonts weren't found (non-critical)
+process.exit(0);
