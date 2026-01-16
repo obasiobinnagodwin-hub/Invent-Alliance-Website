@@ -149,9 +149,13 @@ export function validateConfig(isProduction: boolean = process.env.NODE_ENV === 
  * Validate and log results
  * 
  * @param isProduction - Whether running in production mode
- * @throws Error in production if validation fails
+ * @param strictMode - If false, errors are logged but don't throw (default: false for Railway compatibility)
+ * @throws Error in production if validation fails and strictMode is true
  */
-export function validateAndLog(isProduction: boolean = process.env.NODE_ENV === 'production'): void {
+export function validateAndLog(
+  isProduction: boolean = process.env.NODE_ENV === 'production',
+  strictMode: boolean = process.env.CONFIG_VALIDATION_STRICT === 'true'
+): void {
   const result = validateConfig(isProduction);
 
   // Log warnings (non-blocking)
@@ -160,17 +164,26 @@ export function validateAndLog(isProduction: boolean = process.env.NODE_ENV === 
     result.warnings.forEach(warning => console.warn(`   - ${warning}`));
   }
 
-  // Log errors and throw in production
+  // Log errors
   if (result.errors.length > 0) {
     console.error('❌ Configuration Errors:');
     result.errors.forEach(error => console.error(`   - ${error}`));
     
     if (isProduction) {
-      console.error('\n🚫 Production startup blocked due to configuration errors.');
-      console.error('   Please fix the configuration errors before starting the application.\n');
-      throw new Error('Configuration validation failed. See errors above.');
+      if (strictMode) {
+        // Strict mode: throw and block startup
+        console.error('\n🚫 Production startup blocked due to configuration errors (strict mode enabled).');
+        console.error('   Please fix the configuration errors before starting the application.');
+        console.error('   Set CONFIG_VALIDATION_STRICT=false to allow startup with warnings.\n');
+        throw new Error('Configuration validation failed. See errors above.');
+      } else {
+        // Non-strict mode: log but don't crash (Railway-friendly)
+        console.error('\n⚠️  Configuration validation failed (non-strict mode).');
+        console.error('   Application will start, but please review and fix configuration errors.');
+        console.error('   Set CONFIG_VALIDATION_STRICT=true to enable strict validation.\n');
+      }
     } else {
-      console.error('\n⚠️  These errors will block startup in production mode.');
+      console.error('\n⚠️  These errors will block startup in production mode (strict mode).');
       console.error('   Fix these issues before deploying to production.\n');
     }
   }

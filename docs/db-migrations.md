@@ -10,6 +10,8 @@ Database migrations are located in `database/migrations/` and are numbered seque
 - `003_add_pii_hash_columns.sql` - PII hash columns for GDPR
 - `004_add_users_email_encrypted.sql` - Email encryption support
 - `005_add_performance_indexes.sql` - Performance indexes for analytics
+- `006_create_page_views_archive.sql` - Archive table for aggregated page views
+- `007_drop_unused_columns.sql` - Drop unused columns (⚠️ Optional, requires manual review)
 
 ## Migration Safety Principles
 
@@ -226,7 +228,9 @@ If a migration causes issues:
 | 002 | - | User email index | ✅ Stable |
 | 003 | - | PII hash columns | ✅ Stable |
 | 004 | - | Email encryption | ✅ Stable |
-| 005 | 2024-01-16 | Performance indexes | 🆕 New |
+| 005 | 2024-01-16 | Performance indexes | ✅ Stable |
+| 006 | 2024-01-16 | Page views archive table | ✅ Stable |
+| 007 | 2024-01-16 | Drop unused columns | ⚠️ Optional (requires review) |
 
 ## Additional Resources
 

@@ -323,6 +323,14 @@ Contact
 3. **Sources**: Traffic source breakdown and analysis
 4. **System**: API performance, response times, error rates
 
+**Goal & Funnel Tracking** (when `FEATURE_FUNNEL_GOALS=true`):
+- **Goal Types**: Contact form submissions, Academy registrations, Report downloads
+- **Funnel Steps**: Page load, Form start, Form submit, Success
+- **Conversion Analytics**: Track user journey through conversion funnels
+- **Non-PII Metadata**: Stores only non-personally identifiable information (subject category, stream, etc.)
+- **Cookie Consent Integration**: Respects user consent preferences
+- **API Endpoint**: `/api/analytics/goals` (GET for data, POST for tracking)
+
 ### 11. Error Handling
 
 **Error Pages:**
@@ -587,7 +595,95 @@ ial-website-redesign/
 - Responsive with horizontal scroll
 - Clean, modern styling
 
-### 7. ProtectedRoute Component
+### 7. AccessibleFormField Component (Gated)
+
+**Location:** `components/AccessibleFormField.tsx`
+
+**Features:**
+- WCAG 2.1 AA compliant form field wrapper
+- Proper label associations (`htmlFor`/`id`)
+- ARIA invalid states for validation errors
+- Error announcements with `role="alert"`
+- Help text associations via `aria-describedby`
+- Minimum touch target size (48px) for mobile
+- Enabled when `FEATURE_ACCESSIBILITY_UPGRADES=true`
+
+**Usage:**
+```typescript
+<AccessibleFormField
+  label="Email Address"
+  id="email"
+  error={errors.email}
+  helpText="We'll never share your email"
+  required
+>
+  <input type="email" id="email" />
+</AccessibleFormField>
+```
+
+### 8. MultiStepAcademyForm Component (Gated)
+
+**Location:** `components/MultiStepAcademyForm.tsx`
+
+**Features:**
+- Multi-step registration flow (3 steps)
+- Progress indicator
+- Step-by-step validation
+- Input persistence between steps
+- Review step before submission
+- Enabled when `FEATURE_ACADEMY_MULTI_STEP_FORM=true`
+- Falls back to single-page form when disabled
+
+**Steps:**
+1. Personal Information (name, email, phone, age)
+2. Program Choices (stream selection, additional info)
+3. Review & Submit
+
+### 9. CookieConsent Component (Gated)
+
+**Location:** `components/CookieConsent.tsx`
+
+**Features:**
+- GDPR-compliant cookie consent banner
+- Granular consent options (analytics, marketing)
+- localStorage and cookie-based preference storage
+- Blocks analytics until consent given
+- Enabled when `FEATURE_COOKIE_CONSENT=true`
+
+### 10. TrustSignals Component (Gated)
+
+**Location:** `components/TrustSignals.tsx`
+
+**Features:**
+- Security badges and certifications display
+- GDPR compliance indicators
+- Privacy policy links
+- SSL/TLS certificate indicators
+- Enabled when `FEATURE_TRUST_SIGNALS=true`
+
+### 11. CTAButton Component (Gated)
+
+**Location:** `components/CTAButton.tsx`
+
+**Features:**
+- Optimized call-to-action button component
+- Variants: primary, secondary, success
+- Loading state support
+- Optional icon support
+- Disabled state prevents double submission
+- Enabled when `FEATURE_CTA_BUTTONS=true`
+
+### 12. SkipToContent Component (Gated)
+
+**Location:** `components/SkipToContent.tsx`
+
+**Features:**
+- Skip link for keyboard/screen reader users
+- Visible on focus
+- Jumps to main content
+- Enabled when `FEATURE_ACCESSIBILITY_UPGRADES=true`
+
+### 13. ProtectedRoute Component
 
 **Location:** `components/ProtectedRoute.tsx`
 
@@ -631,6 +727,10 @@ ial-website-redesign/
 - Rate limiting (5 requests per 15 minutes per IP)
 - SMTP email sending
 - Multiple recipient support (comma-separated emails)
+- **Accessibility**: Accessible form fields with ARIA labels (when `FEATURE_ACCESSIBILITY_UPGRADES=true`)
+- **Analytics**: Goal tracking on successful submission (when `FEATURE_FUNNEL_GOALS=true`)
+- **Trust Signals**: Trust indicators panel (when `FEATURE_TRUST_SIGNALS=true`)
+- **CTA Optimization**: Optimized submit button (when `FEATURE_CTA_BUTTONS=true`)
 
 **Email Configuration:**
 ```env
@@ -664,6 +764,11 @@ CONTACT_TO_EMAIL=contact@inventallianceco.com,contact@patrickogbonna.com
 - Rate limiting (3 requests per 15 minutes per IP)
 - SMTP email sending
 - Multiple recipient support
+- **Multi-step Form**: Optional multi-step registration flow (when `FEATURE_ACADEMY_MULTI_STEP_FORM=true`)
+- **Accessibility**: Accessible form fields with ARIA labels (when `FEATURE_ACCESSIBILITY_UPGRADES=true`)
+- **Analytics**: Goal and funnel step tracking (when `FEATURE_FUNNEL_GOALS=true`)
+- **Trust Signals**: Trust indicators panel (when `FEATURE_TRUST_SIGNALS=true`)
+- **CTA Optimization**: Optimized submit button (when `FEATURE_CTA_BUTTONS=true`)
 
 **Email Configuration:**
 ```env
@@ -747,6 +852,62 @@ ACADEMY_TO_EMAIL=academy@inventallianceco.com,contact@patrickogbonna.com
 - Seeds sample analytics data
 - Useful for testing and development
 - Only available in non-production environments
+
+**Goals & Funnel Tracking Route:** `/api/analytics/goals` (when `FEATURE_FUNNEL_GOALS=true`)
+- **GET**: Returns aggregated goal and funnel step data
+  - Goal counts by type
+  - Funnel conversion rates
+  - Step-by-step funnel analytics
+- **POST**: Tracks goal events and funnel steps
+  - Accepts `{ type, metadata?, timestamp }` for goals
+  - Accepts `{ funnel, step, metadata?, timestamp }` for funnel steps
+  - Stores in-memory (DB-ready for future migration)
+  - Respects cookie consent preferences
+  - No PII stored in metadata (only non-PII like subject category, stream)
+
+### Data Subject Access Request (DSAR) API Route
+
+**Route:** `/api/data-subject-request` (when `FEATURE_DSAR_PORTAL=true`)
+
+**Features:**
+- Handles GDPR data subject rights requests
+- Supports access, rectification, erasure, portability requests
+- CSRF protection (when `FEATURE_CSRF=true`)
+- Email notifications to data protection officer
+- Request tracking and status updates
+
+### Admin API Routes (Protected)
+
+**Processing Activities Route:** `/api/admin/processing-activities` (when `FEATURE_ROPA_ENDPOINT=true`)
+- Returns Records of Processing Activities (ROPA) register
+- GDPR Article 30 compliance endpoint
+- Admin authentication required
+- JSON export format
+
+**Retention Route:** `/api/admin/retention` (when `FEATURE_RETENTION_ENDPOINT=true`)
+- Manually triggers data retention policies
+- Admin authentication required
+- Returns retention summary report
+- Supports different retention periods per data type
+
+### Health Check Route
+
+**Route:** `/api/health`
+
+**Features:**
+- Database connection health check
+- Connection pool statistics (when `FEATURE_DB_MONITORING=true`)
+- Returns system health status
+- Useful for monitoring and load balancers
+
+### CSRF Token Route
+
+**Route:** `/api/csrf-token` (when `FEATURE_CSRF=true`)
+
+**Features:**
+- Returns CSRF token for form submissions
+- Token expires after configured time
+- Required for POST/PUT/DELETE requests when CSRF protection is enabled
 
 ---
 
@@ -1088,6 +1249,62 @@ JWT_SECRET=your-random-secret-key-change-in-production
 
 ---
 
+## Feature Flags System
+
+The application uses a comprehensive feature flag system for gradual rollout, A/B testing, and feature toggling. All feature flags are defined in `lib/feature-flags.ts`.
+
+### How Feature Flags Work
+
+Feature flags are controlled via environment variables. Set `FEATURE_NAME=true` to enable a feature, or omit/set to `false` to disable it.
+
+**Example:**
+```env
+FEATURE_ACCESSIBILITY_UPGRADES=true
+FEATURE_FUNNEL_GOALS=false
+FEATURE_COOKIE_CONSENT=true
+```
+
+### Key Feature Flags
+
+#### Security & GDPR Flags
+- `FEATURE_CSRF` - CSRF protection on forms
+- `FEATURE_SECURE_HEADERS` - Enhanced security headers (auto-enabled in production)
+- `FEATURE_COOKIE_CONSENT` - GDPR cookie consent banner
+- `FEATURE_PII_HASHING` - Pseudonymize/hash PII data
+- `FEATURE_PII_EMAIL_ENCRYPTION` - Encrypt emails at rest
+- `FEATURE_RETENTION_JOBS` - Automated data retention cleanup
+- `FEATURE_RETENTION_ENDPOINT` - Manual retention trigger endpoint
+- `FEATURE_ROPA_ENDPOINT` - Records of Processing Activities endpoint
+- `FEATURE_DSAR_PORTAL` - Data Subject Access Request portal
+- `FEATURE_RATE_LIMIT_LOGIN` - Rate limiting on login endpoint
+- `FEATURE_STRICT_SAMESITE_AUTH` - Strict SameSite for auth cookies
+
+#### UX & Accessibility Flags
+- `FEATURE_ACCESSIBILITY_UPGRADES` - WCAG 2.1 AA accessibility improvements
+- `FEATURE_TRUST_SIGNALS` - Trust indicators panel on forms
+- `FEATURE_CTA_BUTTONS` - Optimized CTA button component
+- `FEATURE_ACADEMY_MULTI_STEP_FORM` - Multi-step academy registration form
+- `FEATURE_DASHBOARD_SKELETON_LOADING` - Skeleton loading states
+- `FEATURE_DASHBOARD_ERROR_RECOVERY` - Enhanced error handling
+
+#### Analytics & Performance Flags
+- `FEATURE_FUNNEL_GOALS` - Goal and funnel tracking
+- `FEATURE_API_CACHE` - API response caching
+- `FEATURE_MONITORING_METRICS` - Performance monitoring
+- `FEATURE_ANALYTICS_BATCH_WRITE` - Batch analytics writes
+- `FEATURE_ANALYTICS_JOIN_OPTIMIZED_READS` - Optimized JOIN queries
+
+### Feature Flag Validation
+
+The system includes validation to detect configuration issues:
+- Missing dependencies (e.g., CSRF requires secure headers)
+- Missing environment variables (e.g., encryption requires encryption key)
+- Logical conflicts between flags
+
+See `lib/feature-flags.ts` for complete documentation of all flags.
+
+---
+
 ## Security Features
 
 ### 1. Form Security
@@ -1152,7 +1369,7 @@ JWT_SECRET=your-random-secret-key-change-in-production
 
 ## Accessibility
 
-### WCAG Compliance
+### WCAG 2.1 AA Compliance
 
 **Implemented Features:**
 - **Semantic HTML**: Proper use of HTML5 elements
@@ -1163,13 +1380,40 @@ JWT_SECRET=your-random-secret-key-change-in-production
 - **Color Contrast**: Sufficient contrast ratios for text
 - **Form Labels**: Proper label associations
 
+### Enhanced Accessibility Features (when `FEATURE_ACCESSIBILITY_UPGRADES=true`)
+
+**AccessibleFormField Component:**
+- Proper label associations (`htmlFor`/`id`)
+- ARIA invalid states (`aria-invalid`)
+- Error announcements with `role="alert"`
+- Help text associations via `aria-describedby`
+- Minimum touch target size (48px) for mobile
+
+**Navbar Enhancements:**
+- `aria-expanded` for mobile menu toggle
+- `aria-controls` linking toggle to menu
+- `aria-label` for menu button
+- Focus trap when mobile menu is open
+- Escape key closes mobile menu
+
+**Skip to Content Link:**
+- Visible on keyboard focus
+- Jumps to main content (`id="main-content"`)
+- Screen reader friendly
+
+**Dashboard ARIA Live Announcements:**
+- `aria-live="polite"` announcements for data updates
+- Screen reader notifications when dashboard data refreshes
+- Non-intrusive status updates
+
 ### Keyboard Navigation
 
 **Supported Interactions:**
 - Tab navigation through all interactive elements
 - Enter/Space to activate buttons and links
-- Escape to close dropdowns and modals
+- Escape to close dropdowns and modals (when accessibility upgrades enabled)
 - Arrow keys for dropdown navigation (where applicable)
+- Focus trap in mobile menu (when accessibility upgrades enabled)
 
 ### Screen Reader Support
 
@@ -1177,7 +1421,10 @@ JWT_SECRET=your-random-secret-key-change-in-production
 - ARIA labels on navigation elements
 - Descriptive link text
 - Form field labels and error messages
-- Skip to main content link (where applicable)
+- Skip to main content link
+- ARIA live regions for dynamic content updates
+- Proper heading hierarchy
+- Form error announcements
 
 ---
 
@@ -1194,8 +1441,9 @@ JWT_SECRET=your-random-secret-key-change-in-production
 - [x] **Built-in analytics dashboard** ✅
 - [x] **Real-time tracking** ✅
 - [x] **Report export (CSV/PDF)** ✅
+- [x] **Goal & funnel tracking** ✅ (when `FEATURE_FUNNEL_GOALS=true`)
 - [ ] Google Analytics integration (optional addition)
-- [ ] Form submission tracking in analytics
+- [ ] Advanced funnel visualization in dashboard
 
 **3. Performance**
 - [ ] Font optimization with `next/font`

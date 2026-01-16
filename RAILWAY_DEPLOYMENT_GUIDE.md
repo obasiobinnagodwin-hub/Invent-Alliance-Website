@@ -341,19 +341,26 @@ FEATURE_ACADEMY_MULTI_STEP_FORM=false  # Optional
    # Link to project
    railway link
    
+   # Navigate to project root directory (IMPORTANT: paths are relative to current directory)
+   cd /path/to/your/project/ial-website-redesign
+   
    # Connect to database
    railway connect postgres
    ```
 
-2. Run migrations in order:
+2. Run migrations in order (from project root directory):
    ```sql
    -- Run each migration file
+   -- Note: These paths are relative to the current working directory
+   -- Make sure you're in the project root when running these commands
    \i database/migrations/001_initial_schema.sql
-   \i database/migrations/002_analytics_tables.sql
+   \i database/migrations/002_add_user_email_index.sql
    \i database/migrations/003_add_pii_hash_columns.sql
    \i database/migrations/004_add_users_email_encrypted.sql
    \i database/migrations/005_add_performance_indexes.sql
    \i database/migrations/006_create_page_views_archive.sql
+   -- Migration 007 is OPTIONAL and requires manual review before applying
+   -- \i database/migrations/007_drop_unused_columns.sql
    ```
 
 **Option B: Automated Migration (Via Railway CLI)**
@@ -368,10 +375,54 @@ railway login
 # Link to your project
 railway link
 
-# Run migrations (using Railway's DATABASE_URL)
-railway run psql $DATABASE_URL -f database/migrations/001_initial_schema.sql
-railway run psql $DATABASE_URL -f database/migrations/002_analytics_tables.sql
-# ... continue for all migrations
+# Method 1: Run migrations using Railway's shell (recommended)
+# IMPORTANT: Run these commands from the project root directory
+# This runs psql within Railway's environment where DATABASE_URL is accessible
+cd /path/to/your/project/ial-website-redesign
+railway run bash -c "psql \$DATABASE_URL -f database/migrations/001_initial_schema.sql"
+railway run bash -c "psql \$DATABASE_URL -f database/migrations/002_add_user_email_index.sql"
+railway run bash -c "psql \$DATABASE_URL -f database/migrations/003_add_pii_hash_columns.sql"
+railway run bash -c "psql \$DATABASE_URL -f database/migrations/004_add_users_email_encrypted.sql"
+railway run bash -c "psql \$DATABASE_URL -f database/migrations/005_add_performance_indexes.sql"
+railway run bash -c "psql \$DATABASE_URL -f database/migrations/006_create_page_views_archive.sql"
+# Migration 007 is OPTIONAL - review the file before applying (drops unused columns)
+# railway run bash -c "psql \$DATABASE_URL -f database/migrations/007_drop_unused_columns.sql"
+
+# Method 2: Use Railway shell interactively
+# IMPORTANT: Navigate to project root before entering shell
+cd /path/to/your/project/ial-website-redesign
+railway shell
+# Then inside Railway shell:
+psql $DATABASE_URL -f database/migrations/001_initial_schema.sql
+psql $DATABASE_URL -f database/migrations/002_add_user_email_index.sql
+psql $DATABASE_URL -f database/migrations/003_add_pii_hash_columns.sql
+psql $DATABASE_URL -f database/migrations/004_add_users_email_encrypted.sql
+psql $DATABASE_URL -f database/migrations/005_add_performance_indexes.sql
+psql $DATABASE_URL -f database/migrations/006_create_page_views_archive.sql
+# Migration 007 is OPTIONAL - review the file before applying (drops unused columns)
+# psql $DATABASE_URL -f database/migrations/007_drop_unused_columns.sql
+exit
+
+# Method 3: Get public connection string from Railway dashboard
+# Steps to get Railway database credentials:
+# 1. Go to Railway Dashboard (https://railway.app)
+# 2. Select your project
+# 3. Click on your PostgreSQL Database service
+# 4. Click on the "Variables" tab (or "Connect" tab)
+# 5. Look for the "DATABASE_URL" variable - this contains the full connection string
+#    OR look for individual variables:
+#    - PGHOST (or DB_HOST) = hostname
+#    - PGPORT (or DB_PORT) = port (usually 5432)
+#    - PGDATABASE (or DB_NAME) = database name (usually "railway")
+#    - PGUSER (or DB_USER) = username (usually "postgres")
+#    - PGPASSWORD (or DB_PASSWORD) = password
+# 6. Copy the FULL connection string (format: postgresql://user:password@hostname:port/railway)
+# 7. Use it directly with psql:
+psql "postgresql://postgres:YOUR_PASSWORD@postgres-production-e4cbe.up.railway.app:5432/railway" -f database/migrations/001_initial_schema.sql
+
+# Note: Replace YOUR_PASSWORD with the actual password from Railway Variables
+# The connection string format is: postgresql://USERNAME:PASSWORD@HOSTNAME:PORT/DATABASE
+# Example: postgresql://postgres:abc123xyz@postgres-production-e4cbe.up.railway.app:5432/railway
 ```
 
 **Option C: Via Railway Dashboard**

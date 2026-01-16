@@ -1044,8 +1044,14 @@ export function validateFeatureFlags(): string[] {
  * 
  * Logs which features are enabled and any validation warnings.
  * Only logs in development or if explicitly enabled via FEATURE_FLAGS_DEBUG=true
+ * Safe to call in any environment (Edge Runtime, Node.js, Browser)
  */
 export function logFeatureFlagsStatus(): void {
+  // Check if we're in an environment that supports logging
+  if (typeof process === 'undefined' || typeof console === 'undefined') {
+    return; // Edge Runtime or browser without console
+  }
+
   const shouldLog = 
     process.env.NODE_ENV === 'development' || 
     process.env.FEATURE_FLAGS_DEBUG === 'true';
@@ -1054,24 +1060,42 @@ export function logFeatureFlagsStatus(): void {
     return;
   }
 
-  const enabled = getEnabledFeatures();
-  const warnings = validateFeatureFlags();
+  try {
+    const enabled = getEnabledFeatures();
+    const warnings = validateFeatureFlags();
 
-  console.log('🔐 Feature Flags Status:');
-  console.log(`   Enabled (${enabled.length}):`, enabled.length > 0 ? enabled.join(', ') : 'none');
-  console.log(`   Disabled (${Object.keys(FEATURE_FLAGS).length - enabled.length}):`, 
-    Object.keys(FEATURE_FLAGS).filter(name => !enabled.includes(name as FeatureFlagName)).join(', ') || 'none');
+    if (console.log) {
+      console.log('🔐 Feature Flags Status:');
+      console.log(`   Enabled (${enabled.length}):`, enabled.length > 0 ? enabled.join(', ') : 'none');
+      console.log(`   Disabled (${Object.keys(FEATURE_FLAGS).length - enabled.length}):`, 
+        Object.keys(FEATURE_FLAGS).filter(name => !enabled.includes(name as FeatureFlagName)).join(', ') || 'none');
+    }
 
-  if (warnings.length > 0) {
-    console.warn('⚠️  Feature Flag Warnings:');
-    warnings.forEach(warning => console.warn(`   - ${warning}`));
-  } else {
-    console.log('✅ No feature flag configuration issues detected');
+    if (warnings.length > 0 && console.warn) {
+      console.warn('⚠️  Feature Flag Warnings:');
+      warnings.forEach(warning => console.warn(`   - ${warning}`));
+    } else if (console.log) {
+      console.log('✅ No feature flag configuration issues detected');
+    }
+  } catch (error) {
+    // Silently fail - logging should not break the application
+    if (console.error) {
+      console.error('Failed to log feature flags status:', error);
+    }
   }
 }
 
 // Auto-log feature flags status on module load (only in development/debug mode)
+// Wrapped in try-catch to prevent module load errors from breaking the application
 if (process.env.NODE_ENV === 'development' || process.env.FEATURE_FLAGS_DEBUG === 'true') {
-  logFeatureFlagsStatus();
+  try {
+    logFeatureFlagsStatus();
+  } catch (error) {
+    // Silently fail - feature flags logging should not break the application
+    // This can happen in Edge Runtime or during SSR where console methods may not be available
+    if (typeof console !== 'undefined' && console.error) {
+      console.error('Failed to log feature flags status:', error);
+    }
+  }
 }
 
