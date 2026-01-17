@@ -8,14 +8,27 @@
 const bcrypt = require('bcryptjs');
 const { Pool } = require('pg');
 
-const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.DB_NAME || 'ial_analytics',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
-  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
-});
+// Support both DATABASE_URL (Railway) and individual variables
+let poolConfig;
+if (process.env.DATABASE_URL) {
+  // Use DATABASE_URL connection string (Railway-compatible)
+  poolConfig = {
+    connectionString: process.env.DATABASE_URL,
+    connectionTimeoutMillis: 10000,
+  };
+} else {
+  // Use individual environment variables
+  poolConfig = {
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT || '5432'),
+    database: process.env.DB_NAME || 'ial_analytics',
+    user: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD || 'postgres',
+    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
+  };
+}
+
+const pool = new Pool(poolConfig);
 
 async function createAdminUser(username = 'admin', password = 'admin123') {
   try {
