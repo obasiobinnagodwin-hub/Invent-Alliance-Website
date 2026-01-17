@@ -3,20 +3,32 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
-import { FEATURE_ACCESSIBILITY_UPGRADES } from '@/lib/feature-flags';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const [accessibilityEnabled, setAccessibilityEnabled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
   const lastLinkRef = useRef<HTMLAnchorElement>(null);
 
+  // Safely load feature flags - don't let import errors break the navbar
+  useEffect(() => {
+    import('@/lib/feature-flags')
+      .then((module) => {
+        setAccessibilityEnabled(module.FEATURE_ACCESSIBILITY_UPGRADES || false);
+      })
+      .catch(() => {
+        // Silently fail - feature flags are optional
+        setAccessibilityEnabled(false);
+      });
+  }, []);
+
   // Close menu on Escape key
   useEffect(() => {
-    if (!FEATURE_ACCESSIBILITY_UPGRADES) return;
+    if (!accessibilityEnabled) return;
 
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isMenuOpen) {
@@ -31,7 +43,7 @@ export default function Navbar() {
 
   // Focus trap when menu is open
   useEffect(() => {
-    if (!FEATURE_ACCESSIBILITY_UPGRADES || !isMenuOpen) return;
+    if (!accessibilityEnabled || !isMenuOpen) return;
 
     const handleTabKey = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
@@ -107,8 +119,21 @@ export default function Navbar() {
             {/* About Us Dropdown */}
             <div
               className="relative group"
-              onMouseEnter={() => setIsAboutOpen(true)}
-              onMouseLeave={() => setIsAboutOpen(false)}
+              onMouseEnter={(e) => {
+                e.preventDefault();
+                setIsAboutOpen(true);
+              }}
+              onMouseLeave={(e) => {
+                e.preventDefault();
+                setIsAboutOpen(false);
+              }}
+              onFocus={() => setIsAboutOpen(true)}
+              onBlur={(e) => {
+                // Only close if focus is moving outside the dropdown
+                if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                  setIsAboutOpen(false);
+                }
+              }}
             >
               <Link
                 href="/about-us"
@@ -135,8 +160,21 @@ export default function Navbar() {
             {/* Services Dropdown */}
             <div
               className="relative group"
-              onMouseEnter={() => setIsServicesOpen(true)}
-              onMouseLeave={() => setIsServicesOpen(false)}
+              onMouseEnter={(e) => {
+                e.preventDefault();
+                setIsServicesOpen(true);
+              }}
+              onMouseLeave={(e) => {
+                e.preventDefault();
+                setIsServicesOpen(false);
+              }}
+              onFocus={() => setIsServicesOpen(true)}
+              onBlur={(e) => {
+                // Only close if focus is moving outside the dropdown
+                if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                  setIsServicesOpen(false);
+                }
+              }}
             >
               <Link
                 href="/products-services"
@@ -227,9 +265,9 @@ export default function Navbar() {
             ref={menuButtonRef}
             className="lg:hidden p-2 text-white hover:text-blue-300 transition-all duration-300"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label={FEATURE_ACCESSIBILITY_UPGRADES ? (isMenuOpen ? 'Close navigation menu' : 'Open navigation menu') : 'Toggle menu'}
+            aria-label={accessibilityEnabled ? (isMenuOpen ? 'Close navigation menu' : 'Open navigation menu') : 'Toggle menu'}
             aria-expanded={isMenuOpen}
-            aria-controls={FEATURE_ACCESSIBILITY_UPGRADES ? 'mobile-menu' : undefined}
+            aria-controls={accessibilityEnabled ? 'mobile-menu' : undefined}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMenuOpen ? (
@@ -245,16 +283,16 @@ export default function Navbar() {
         {isMenuOpen && (
           <div
             ref={menuRef}
-            id={FEATURE_ACCESSIBILITY_UPGRADES ? 'mobile-menu' : undefined}
+            id={accessibilityEnabled ? 'mobile-menu' : undefined}
             className="lg:hidden py-4 border-t border-slate-600/40 bg-slate-800/98 backdrop-blur-md"
-            role={FEATURE_ACCESSIBILITY_UPGRADES ? 'menu' : undefined}
+            role={accessibilityEnabled ? 'menu' : undefined}
           >
             <Link
               ref={firstLinkRef}
               href="/"
               className="block px-4 py-2 text-white hover:text-blue-300 hover:bg-slate-700/50 transition-all duration-300 font-bold text-elevated"
               onClick={() => setIsMenuOpen(false)}
-              role={FEATURE_ACCESSIBILITY_UPGRADES ? 'menuitem' : undefined}
+              role={accessibilityEnabled ? 'menuitem' : undefined}
             >
               Home
             </Link>
@@ -305,7 +343,7 @@ export default function Navbar() {
               href="/contacts"
               className="block px-4 py-2 text-white hover:text-blue-300 hover:bg-slate-700/50 transition-all duration-300 font-bold text-elevated"
               onClick={() => setIsMenuOpen(false)}
-              role={FEATURE_ACCESSIBILITY_UPGRADES ? 'menuitem' : undefined}
+              role={accessibilityEnabled ? 'menuitem' : undefined}
             >
               Contact
             </Link>
@@ -317,7 +355,7 @@ export default function Navbar() {
                 className="block px-4 py-2 bg-blue-600/90 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all duration-300 flex items-center gap-2"
                 onClick={() => setIsMenuOpen(false)}
                 title="Admin Portal"
-                role={FEATURE_ACCESSIBILITY_UPGRADES ? 'menuitem' : undefined}
+                role={accessibilityEnabled ? 'menuitem' : undefined}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
