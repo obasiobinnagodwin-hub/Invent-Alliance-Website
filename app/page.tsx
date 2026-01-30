@@ -78,18 +78,26 @@ const services = [
   {
     title: 'Invent Properties',
     description: 'We are a well-rounded real estate development firm that specializes in the full spectrum services for the construction and real estate industry.',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2023/06/TokyoInvent-7-512x364.jpg',
-    imageAlt: 'Tokyo(Invent)-7',
+     imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2023/06/invent-shortlet-home-scaled-1-512x364.jpg',
+    imageAlt: 'invent-shortlet-home-scaled',
     linkUrl: 'https://properties.inventallianceco.com/',
     external: true,
   },
   {
     title: 'Invent Shortlet',
     description: 'Invent Apartment (Short-let) are tastefully designed for executives with top notch facilities that matches the global trend for hospitality.',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2023/06/invent-shortlet-home-scaled-1-512x364.jpg',
-    imageAlt: 'invent-shortlet-home-scaled',
+    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2023/06/TokyoInvent-7-512x364.jpg',
+    imageAlt: 'Invent Shortlet',
     linkUrl: 'https://shortlet.inventallianceco.com',
     external: true,
+  },
+   {
+    title: 'Invent Shortlet',
+    description: 'Invent Apartment (Short-let) are tastefully designed for executives with top notch facilities that matches the global trend for hospitality.',
+   imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2023/06/TokyoInvent-7-512x364.jpg',
+   imageAlt: 'Invent Shortlet',
+   linkUrl: 'https://shortlet.inventallianceco.com',
+  external: true,
   },
 ];
 
@@ -115,7 +123,7 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 py-20 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-indigo-500/10 to-cyan-500/10"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.08),transparent_50%)]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(134, 246, 59, 0.08),transparent_50%)]"></div>
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
             <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-center text-white text-elevated-strong">
               Our vision is to create a multi-business alliance through development of a multi sector

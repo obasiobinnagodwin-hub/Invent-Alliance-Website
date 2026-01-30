@@ -18,29 +18,29 @@ const teamMembers = [
     imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2018/03/1_francis-350x250.jpg',
   },
   {
-    name: 'Favour David',
-    description: 'Updating...',
-    imageUrl: 'https://ui-avatars.com/api/?name=Favour+David&background=3b82f6&color=fff&size=400&bold=true',
+    name: 'Nmesoma Favour David B.Eng.',
+    description: 'Nmesoma Favour David is a Facility Manager with a Bachelor’s degree in Civil Engineering from the Federal University of Technology, Owerri. Her professional background is rooted in building construction....',
+    imageUrl: '/images/favour.jpg', // local image}
   },
   {
     name: 'Christopher Odinakachi',
     description: 'Updating...',
-    imageUrl: 'https://ui-avatars.com/api/?name=Christopher+Odinakachi&background=3b82f6&color=fff&size=400&bold=true',
+    imageUrl: '/images/christopher.jpg', // local image}
   },
   {
-    name: 'Obinna Obasi',
-    description: 'Updating...',
-    imageUrl: 'https://ui-avatars.com/api/?name=Obinna+Obasi&background=3b82f6&color=fff&size=400&bold=true',
+    name: 'Obasi Obinna Godwin B.Eng.',
+    description: 'IT, Network & Cybersecurity Professional. Obinna is an experienced IT, network, and cybersecurity professional...',
+    imageUrl: '/images/obinna.jpg', // local image}
   },
   {
     name: 'Chizoba Ezeigwe',
-    description: 'Updating...',
-    imageUrl: 'https://ui-avatars.com/api/?name=Chizoba+Ezeigwe&background=3b82f6&color=fff&size=400&bold=true',
+    description: 'Chizoba Ezeigwe is an operations and hospitality management professional based in Lagos, Nigeria, with expertise in serviced apartment management, customer experience, and administrative operations...',
+    imageUrl: '/images/chizoba.jpg', // local image}
   },
   {
-    name: 'Okechukwu Umehan',
-    description: 'Updating...',
-    imageUrl: 'https://ui-avatars.com/api/?name=Okechukwu+Umehan&background=3b82f6&color=fff&size=400&bold=true',
+    name: 'Okechukwu Umehan B.Sc',
+    description: 'Okechukwu is a Result driven Bakery Operations Manager with 15+ years of experience managing large-scale bakery production, quality control, and cross-functional teams',
+    imageUrl: '/images/okechukwu.jpg', // local image}
   },
 ];
 
