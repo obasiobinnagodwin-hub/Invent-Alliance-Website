@@ -39,7 +39,7 @@ export default function Careers() {
           </div>
         </div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

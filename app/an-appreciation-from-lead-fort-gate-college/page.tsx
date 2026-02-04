@@ -34,7 +34,7 @@ export default function BlogPost() {
           </article>
         </div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

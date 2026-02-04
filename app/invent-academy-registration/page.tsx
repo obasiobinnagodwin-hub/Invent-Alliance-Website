@@ -332,7 +332,7 @@ export default function InventAcademyRegistration() {
           </div>
         </div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

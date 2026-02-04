@@ -83,7 +83,7 @@ export default function ProductsServices() {
           </div>
         </div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

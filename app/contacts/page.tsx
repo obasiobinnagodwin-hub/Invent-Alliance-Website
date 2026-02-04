@@ -304,7 +304,7 @@ export default function Contacts() {
           </div>
         </div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

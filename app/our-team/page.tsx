@@ -3,38 +3,51 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Our Team',
+  title: '',
   description: 'Meet the experienced team at Invent Alliance Limited. Our professionals bring expertise in accounting, management, human resources, and more.',
   openGraph: {
-    title: 'Our Team - Invent Alliance Limited',
+    title: ' - Invent Alliance Limited',
     description: 'Meet the experienced team at Invent Alliance Limited.',
     type: 'website',
   },
 };
 
 const teamMembers = [
+  
   {
-    name: 'Francis Chidebe B.Sc, ACA',
+    name: 'Francis Chidebe',
     description: 'Francis is a seasoned Chartered Accountant and Management professional whose experience spans Investment...',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2018/03/1_francis-350x250.jpg',
+    imageUrl: '/images/francis.jpg', // local image}
     profileUrl: '/staff/francis-chidebe',
   },
   {
-    name: 'Dumebi Ejeteh B.Sc',
+    name: 'Nmesoma Favour David B.Eng',
     description: 'Dumebi is an astute professional with certification in Human resource and soft skill development...',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2018/08/dumebi-350x250.jpeg',
+    imageUrl: '/images/favour.jpg', // local image}
     profileUrl: '/staff/dumebi-ejeteh',
   },
   {
     name: 'Christopher Odinakachi B.Ed.',
     description: 'Cosmos is a gumptious professional whose experience spans the educational, political and management...',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2018/03/3_cosmos-350x250.jpg',
+    imageUrl: '/images/odi.jpg', // local image}
     profileUrl: '/staff/cosmos-eze',
   },
   {
-    name: 'Rosemary Chukwukere B.Sc,M.Sc',
+    name: 'Obasi Obinna Godwin B.Eng',
     description: 'Rosemary is a proactive, dynamic, multi-tasking and result-oriented professional with 7years experience...',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2018/03/4_rose-350x250.jpg',
+    imageUrl: '/images/obinna.jpg', // local image}
+    profileUrl: '/staff/rosemary-chukwukere',
+  },
+  {
+    name: 'Chizoba Ezeigwe B.SC',
+    description: 'Rosemary is a proactive, dynamic, multi-tasking and result-oriented professional with 7years experience...',
+    imageUrl: '/images/chizoba.jpg', // local image}
+    profileUrl: '/staff/rosemary-chukwukere',
+  },
+  {
+    name: 'Okechukwu Umehan B.SC',
+    description: 'Rosemary is a proactive, dynamic, multi-tasking and result-oriented professional with 7years experience...',
+    imageUrl: '/images/okechukwu.jpg', // local image}
     profileUrl: '/staff/rosemary-chukwukere',
   },
 ];
@@ -44,7 +57,7 @@ export default function OurTeam() {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800">
       <main className="flex-grow py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-extrabold text-white mb-12 text-center text-elevated-strong">Our Team</h1>
+          <h1 className="text-4xl font-extrabold text-white mb-12 text-center text-elevated-strong"></h1>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member, index) => (
               <div key={index} className="glass-dark rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-slate-700/50 hover:border-slate-500/70">
@@ -77,7 +90,7 @@ export default function OurTeam() {
           </div>
         </div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }
