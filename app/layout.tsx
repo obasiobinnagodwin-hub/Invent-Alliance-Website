@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { defaultMetadata } from "./metadata";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ChatbotWidget from "@/components/Chatbot";
+import ClientLayout from "@/components/ClientLayout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export const metadata: Metadata = {
@@ -28,23 +26,22 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <head>
-        <link rel="canonical" href={process.env.NEXT_PUBLIC_SITE_URL || 'https://www.inventallianceco.com'} />
+        <link
+          rel="canonical"
+          href={process.env.NEXT_PUBLIC_SITE_URL || 'https://www.inventallianceco.com'}
+        />
       </head>
-      <body className="antialiased bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800 min-h-screen">
+      <body className="antialiased bg-white min-h-screen">
         <ErrorBoundary>
-          <Navbar />
-          {children}
-          <Footer />
-          <ChatbotWidget />
+          <ClientLayout>{children}</ClientLayout>
         </ErrorBoundary>
       </body>
     </html>
   );
 }
-

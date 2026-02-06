@@ -1,41 +1,62 @@
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
 import { staffMembers } from '@/data/staff';
+import { notFound } from 'next/navigation';
 
-export default function StaffProfile({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const staff = staffMembers.find(
-    (member) => member.slug === params.slug
-  );
+type Props = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
 
-  if (!staff) {
-    notFound();
-  }
+export async function generateMetadata({ params }: Props) {
+  const { slug } = await params;
+  const staff = staffMembers.find((m) => m.slug === slug);
+
+  if (!staff) return {};
+
+  return {
+    title: `${staff.name} | Invent Alliance`,
+    description: staff.shortBio,
+    openGraph: {
+      title: staff.name,
+      description: staff.shortBio,
+      images: [staff.image],
+    },
+  };
+}
+
+export default async function StaffProfile({ params }: Props) {
+  const { slug } = await params;
+  const staff = staffMembers.find((m) => m.slug === slug);
+
+  if (!staff) notFound();
 
   return (
-    <section className="max-w-4xl mx-auto px-6 py-12">
-      <div className="flex flex-col md:flex-row gap-8">
-        <Image
-          src={staff.image}
-          alt={staff.name}
-          width={300}
-          height={300}
-          className="rounded-lg object-cover"
-        />
+    <div className="min-h-screen bg-slate-800 py-16">
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="flex flex-col md:flex-row gap-8 items-start">
+          <div className="relative w-64 h-64 shrink-0">
+            <Image
+              src={staff.image}
+              alt={staff.name}
+              fill
+              className="object-cover rounded-lg"
+            />
+          </div>
 
-        <div>
-          <h1 className="text-3xl font-bold">{staff.name}</h1>
-          <p className="text-lg text-gray-600 mt-1">{staff.title}</p>
-
-          <div className="mt-6 space-y-4 text-gray-800 leading-relaxed whitespace-pre-line">
-            {staff.bio}
+          <div>
+            <h1 className="text-3xl font-bold text-white">
+              {staff.name}
+            </h1>
+            <p className="text-cyan-400 font-medium mb-4">
+              {staff.title}
+            </p>
+            <p className="text-slate-200 whitespace-pre-line leading-relaxed">
+              {staff.bio}
+            </p>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
-

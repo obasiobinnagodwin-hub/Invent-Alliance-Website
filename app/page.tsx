@@ -78,7 +78,7 @@ const services = [
   {
     title: 'Invent Properties',
     description: 'We are a well-rounded real estate development firm that specializes in the full spectrum services for the construction and real estate industry.',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2023/06/TokyoInvent-7-512x364.jpg',
+    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2023/06/invent-shortlet-home-scaled-1-512x364.jpg',
     imageAlt: 'Tokyo(Invent)-7',
     linkUrl: 'https://properties.inventallianceco.com/',
     external: true,
@@ -86,9 +86,17 @@ const services = [
   {
     title: 'Invent Shortlet',
     description: 'Invent Apartment (Short-let) are tastefully designed for executives with top notch facilities that matches the global trend for hospitality.',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2023/06/invent-shortlet-home-scaled-1-512x364.jpg',
+    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2023/06/TokyoInvent-7-512x364.jpg',
     imageAlt: 'invent-shortlet-home-scaled',
     linkUrl: 'https://shortlet.inventallianceco.com',
+    external: true,
+  },
+  {
+    title: 'iWorkZone',
+    description: 'A creative fully furnished work station located in the heart of Ajah, which has a kitchenette and of course 24/7 power and fast internet access..',
+    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2025/12/iwork-zone-desk-scaled-1-512x364.jpg',
+    imageAlt: 'iwork-zone-desk-scaled',
+    linkUrl: 'https://iworkzone.ng/',
     external: true,
   },
 ];

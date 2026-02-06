@@ -13,33 +13,33 @@ export const metadata = {
 
 const teamMembers = [
   {
-    name: 'Francis Chidebe B.Sc, ACA',
-    description: 'Francis is a seasoned Chartered Accountant and Management professional whose experience spans Investment...',
+    name: 'Francis Chidebe ',
+    description: 'Chartered Accountant and management professional leading Finance and Admin at Invent Alliance Limited....',
     imageUrl: '/images/francis.jpg', // local image}
   },
   {
-    name: 'Nmesoma Favour David B.Eng',
-    description: 'Nmesoma Favour David is a Facility Manager with a Bachelor’s degree in Civil Engineering from the Federal University of Technology, Owerri. Her professional background is rooted in building construction....',
+    name: 'Nmesoma Favour David ',
+    description: 'Facility Manager with a Civil Engineering background and hands-on construction experience....',
     imageUrl: '/images/favour.jpg', // local image}
   },  
   {
-    name: 'Christopher Odinakachi B.Ed',
-    description: 'Customer Relations Officer with 4 years of experience in sales and customer service in Nigeria. Skilled in customer engagement, relationship management, and sales support, with a strong focus on customer satisfaction and business growth....',
-    imageUrl: '/images/odi.jpg', // local image}
+    name: 'Christopher Odinakachi',
+    description: 'Customer Relations Officer with experience in sales support and customer engagement.....',
+    imageUrl: '/images/christopher.jpg', // local image}
   }, 
   {
-    name: 'Obasi Obinna Godwin B.Eng',
-    description: 'IT, Network & Cybersecurity Professional. Obinna is an experienced IT, network, and cybersecurity professional...',
+    name: 'Obasi Obinna Godwin',
+    description: 'IT and cybersecurity professional specializing in network security and infrastructure reliability....',
     imageUrl: '/images/obinna.jpg', // local image}
   },
   {
-    name: 'Chizoba Ezeigwe B.SC',
-    description: 'Chizoba Ezeigwe is an operations and hospitality management professional based in Lagos, Nigeria, with expertise in serviced apartment management, customer experience, and administrative operations...',
+    name: 'Chizoba Ezeigwe',
+    description: 'Hospitality and operations professional specializing in serviced apartment management and customer experience....',
     imageUrl: '/images/chizoba.jpg', // local image}
   },
   {
-    name: 'Okechukwu Umehan B.SC',
-    description: 'Okechukwu is a Result driven Bakery Operations Manager with 15+ years of experience managing large-scale bakery production, quality control, and cross-functional teams',
+    name: 'Okechukwu Umeham',
+    description: 'Bakery Operations Manager with fifteen years of experience in large scale production, quality control, and operational efficiency...',
     imageUrl: '/images/okechukwu.jpg', // local image}
   },
 ];
