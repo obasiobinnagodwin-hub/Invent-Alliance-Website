@@ -31,6 +31,7 @@ const organizationSchema = {
   },
   sameAs: [
     // Add social media links when available
+    
   ],
 };
 
@@ -93,7 +94,7 @@ const services = [
   },
   {
     title: 'iWorkZone',
-    description: 'A creative fully furnished work station located in the heart of Ajah, which has a kitchenette and of course 24/7 power and fast internet access..',
+    description: 'A creative fully furnished work station located in the heart of Ajah, which has a kitchenette and ofcourse 24/7 power and fast internet access..',
     imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2025/12/iwork-zone-desk-scaled-1-512x364.jpg',
     imageAlt: 'iwork-zone-desk-scaled',
     linkUrl: 'https://iworkzone.ng/',

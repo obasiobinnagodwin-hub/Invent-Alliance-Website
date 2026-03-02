@@ -124,8 +124,7 @@ export default function Contacts() {
                 <div>
                   <h4 className="font-bold text-white mb-2 text-elevated">Address</h4>
                   <p className="text-white font-medium">
-                    The Invent HQ<br />
-                    Lagos, Nigeria
+                    THE INVENT, Spring Valley Estate, Lekki-Epe Expressway, Alasia, Lagos, Nigeria
                   </p>
                 </div>
                 <div>
@@ -289,7 +288,7 @@ export default function Contacts() {
           <div className="glass-dark rounded-lg shadow-xl overflow-hidden border border-slate-700/50 hover:shadow-2xl transition-all duration-300">
             <div className="relative h-96 w-full aspect-video overflow-hidden">
               <iframe
-                src="https://www.google.com/maps?q=6.4742,3.6244&hl=en&z=15&output=embed"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.3882178925887!2d3.5962933739744574!3d6.472410723757041!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103bf759fb7ebc61%3A0xdb367688898c29ee!2sInvent%20Alliance%20Limited%20%7C%20Business%20Process%20Outsourcing%20Services!5e0!3m2!1sen!2sng!4v1772307591187!5m2!1sen!2sng"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -297,7 +296,7 @@ export default function Contacts() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 className="w-full h-full"
-                title="The Invent HQ Location - Lagos, Nigeria"
+                title="THE INVENT, Spring Valley Estate, Lekki-Epe Expressway, Alasia, Lagos, Nigeria"
               />
               <div className="absolute inset-0 ring-2 ring-white/10 pointer-events-none"></div>
             </div>

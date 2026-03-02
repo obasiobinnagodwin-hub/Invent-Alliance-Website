@@ -8,7 +8,7 @@ export default function Navbar() {
   const [isServicesOpen, setIsServicesOpen] = useState(false);
 
   return (
-    <nav className="navbar sticky top-0 z-50">
+    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="h-20 flex items-center justify-between">
 
@@ -57,6 +57,11 @@ export default function Navbar() {
                   <ExternalLink href="https://properties.inventallianceco.com/">Invent Properties</ExternalLink>
                   <ExternalLink href="https://power.inventallianceco.com/">Invent Power System</ExternalLink>
                   <ExternalLink href="https://ovenfreshng.com/">Invent Bakery</ExternalLink>
+                  <ExternalLink href="https://bpo.inventallianceco.com/">Telemarketing</ExternalLink>
+                  <ExternalLink href="https://iworkzone.ng/">Work Station</ExternalLink>
+                  <ExternalLink href="https://logistics.inventallianceco.com/">Hightech Warehousing</ExternalLink>
+                  <ExternalLink href="https://shortlet.inventallianceco.com/">Invent Shortlet Apartments</ExternalLink>
+                  
                 </Dropdown>
               )}
             </div>
@@ -74,30 +79,86 @@ export default function Navbar() {
 
 /* Components */
 
-function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return <Link href={href} className="nav-link px-3 py-2">{children}</Link>;
-}
-
-function Dropdown({ children }: { children: React.ReactNode }) {
-  return <div className="nav-dropdown absolute left-0 mt-2 w-56 z-50">{children}</div>;
-}
-
-function DropdownLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return <Link href={href} className="dropdown-link">{children}</Link>;
-}
-
-function ExternalLink({ href, children }: { href: string; children: React.ReactNode }) {
+function NavLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="dropdown-link">
+    <Link href={href} className="nav-link px-3 py-2">
       {children}
-    </a>
+    </Link>
+  );
+}
+
+function Dropdown({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <ul className="absolute left-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-md z-50 py-2">
+      {children}
+    </ul>
+  );
+}
+
+function DropdownLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <li>
+      <Link
+        href={href}
+        className="block px-4 py-2 text-sm text-yellow-500 hover:bg-yellow-50"
+      >
+        {children}
+      </Link>
+    </li>
+  );
+}
+
+function ExternalLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <li>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block px-4 py-2 text-sm text-yellow-500 hover:bg-yellow-50"
+      >
+        {children}
+      </a>
+    </li>
   );
 }
 
 function Chevron() {
   return (
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+    <svg
+      className="w-4 h-4"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M19 9l-7 7-7-7"
+      />
     </svg>
   );
 }
