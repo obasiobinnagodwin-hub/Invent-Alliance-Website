@@ -15,7 +15,7 @@ export const staffMembers: StaffMember[] = [
     title: 'Head of Finance & Administration',
     image: '/images/francis.jpg',
     shortBio:
-      'Francis is a Chartered Accountant and management professional leading Finance and Administration at Invent Alliance Limited, with expertise in financial strategy, internal control, and SME advisory.',
+      'Francis is a Chartered Accountant and management professional, specializing in financial strategy, internal controls, and SME advisory.',
     bio: `
 Francis is a seasoned Chartered Accountant and management professional with expertise in investment management, accounting consultancy, strategic financial management, facilities management, cost control, business process design, internal control, procurement, and human resources management. He began his career in financial services with Express Discount Limited as a Marketing Operations and Settlement Officer in 2011, later moving to the SME sector where he held key management roles, including Admin Manager and Chief Financial Officer. He now leads the Finance and Administration Departments at Invent Alliance Limited and serves on the Executive Management (Exco) team. Francis is also an experienced SME start-up advisor, a member of the Institute of Chartered Accountants of Nigeria (ICAN) and the Nigerian Institute of Management (NIM), and is currently pursuing a postgraduate programme in Finance at the University of Lagos, Akoka.`,
   },

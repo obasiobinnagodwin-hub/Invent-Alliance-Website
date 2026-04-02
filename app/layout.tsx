@@ -37,7 +37,7 @@ export default function RootLayout({
           href={process.env.NEXT_PUBLIC_SITE_URL || 'https://www.inventallianceco.com'}
         />
       </head>
-      <body className="antialiased bg-white min-h-screen">
+      <body className="bg-slate-50 text-slate-800 pt-20">
         <ErrorBoundary>
           <ClientLayout>{children}</ClientLayout>
         </ErrorBoundary>

@@ -16,45 +16,50 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-slate-800/95 backdrop-blur-md text-white border-t border-slate-600/40 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-neon opacity-5"></div>
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 z-10">
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          
-          {/* Company Info */}
+    <footer className="bg-invent-dark text-white relative overflow-hidden">
+      
+      {/* subtle glow */}
+      <div className="absolute inset-0 bg-invent-gradient-glow opacity-20 pointer-events-none"></div>
+
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-16">
+
+        {/* GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+          {/* COMPANY */}
           <div>
-            <h4 className="text-white text-lg font-extrabold mb-4 gradient-text-blue text-elevated-bold">
+            <h4 className="text-xl font-bold mb-4">
               Invent Alliance Limited
             </h4>
-            <p className="text-sm mb-4 text-white font-medium">
-              Invent Alliance Limited is a company specialized on creation of multi sector and multi discipline business platform with specialist partnerships for value co-creation in each of the different business segments through modern co-petition business principles.
+
+            <p className="text-sm text-white/80 leading-relaxed mb-4">
+              Invent Alliance Limited is a multi-sector business platform focused on value co-creation through strategic partnerships and modern business principles.
             </p>
+
             <Link
               href="/about-us"
-              className="text-neon-cyan hover:text-neon-blue text-sm font-bold transition-colors duration-300 inline-flex items-center gap-1 group text-elevated"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--invent-yellow)] hover:opacity-90 transition"
             >
-              Learn more
-              <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+              Learn more →
             </Link>
           </div>
 
-          {/* Recent News */}
+          {/* NEWS */}
           <div>
-            <h4 className="text-white text-lg font-extrabold mb-4 gradient-text-purple text-elevated-bold">
+            <h4 className="text-xl font-bold mb-4">
               Recent News
             </h4>
-            <ul className="space-y-2">
+
+            <ul className="space-y-4">
               {recentNews.map((news, index) => (
                 <li key={index}>
                   <Link
                     href={news.slug}
-                    className="text-sm text-white hover:text-neon-purple transition-colors duration-300 inline-block group font-semibold"
+                    className="text-sm font-medium text-white hover:text-[var(--invent-yellow)] transition"
                   >
                     {news.title}
-                    <span className="inline-block ml-1 group-hover:translate-x-1 transition-transform duration-300">→</span>
                   </Link>
-                  <p className="text-xs text-white/70 mt-1 font-medium">
+                  <p className="text-xs text-white/60 mt-1">
                     {news.date}
                   </p>
                 </li>
@@ -62,12 +67,13 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Quick Links */}
+          {/* LINKS */}
           <div>
-            <h4 className="text-white text-lg font-extrabold mb-4 gradient-text-cyan text-elevated-bold">
+            <h4 className="text-xl font-bold mb-4">
               Quick Links
             </h4>
-            <ul className="space-y-2">
+
+            <ul className="space-y-3">
               {[
                 { name: "Home", href: "/" },
                 { name: "About Us", href: "/about-us" },
@@ -81,10 +87,9 @@ export default function Footer() {
                 <li key={index}>
                   <Link
                     href={link.href}
-                    className="text-sm text-white hover:text-neon-cyan transition-colors duration-300 inline-flex items-center gap-1 group font-semibold"
+                    className="text-sm text-white/80 hover:text-[var(--invent-yellow)] transition"
                   >
                     {link.name}
-                    <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
                   </Link>
                 </li>
               ))}
@@ -92,42 +97,33 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Section */}
-        <div className="border-t border-slate-600/40 mt-8 pt-8 text-center text-sm">
+        {/* BOTTOM */}
+        <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row items flex justify-center gap-6">
 
-          <p className="text-white/80">
-            &copy; {new Date().getFullYear()} Invent Alliance Limited. All rights reserved.
-          </p>
+          <div className="text-sm text-white/70 text-center md:text-left">
+            <p>&copy; {new Date().getFullYear()} Invent Alliance Limited. All rights reserved.</p>
+            <p className="mt-1">Redesigned by Invent IT Team</p>
+          </div>
 
-          <p className="mt-2 text-white/80">
-            Redesigned by Invent IT Team
-          </p>
-
-          {/* Social Media Icons */}
-          <div className="flex justify-center gap-6 mt-6 text-xl">
+          {/* SOCIALS */}
+          <div className="flex gap-5 text-lg">
             <a
-              href="https://facebook.com/yourhandle"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neon-cyan hover:text-neon-blue transition-all duration-300 hover:scale-110"
+              href="#"
+              className="text-white/70 hover:text-[var(--invent-yellow)] transition transform hover:scale-110"
             >
               <FaFacebookF />
             </a>
 
             <a
-              href="https://twitter.com/yourhandle"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neon-purple hover:text-neon-cyan transition-all duration-300 hover:scale-110"
+              href="#"
+              className="text-white/70 hover:text-[var(--invent-yellow)] transition transform hover:scale-110"
             >
               <FaTwitter />
             </a>
 
             <a
-              href="https://instagram.com/yourhandle"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-pink-400 hover:text-neon-purple transition-all duration-300 hover:scale-110"
+              href="#"
+              className="text-white/70 hover:text-[var(--invent-yellow)] transition transform hover:scale-110"
             >
               <FaInstagram />
             </a>

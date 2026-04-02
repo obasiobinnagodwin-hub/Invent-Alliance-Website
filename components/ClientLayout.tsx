@@ -1,12 +1,8 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import Navbar from '@/components/Navbar'; // ✅ NORMAL IMPORT
 import Footer from '@/components/Footer';
 import ChatbotWidget from '@/components/Chatbot';
-
-const Navbar = dynamic(() => import('@/components/Navbar'), {
-  ssr: false,
-});
 
 export default function ClientLayout({
   children,
@@ -16,7 +12,11 @@ export default function ClientLayout({
   return (
     <>
       <Navbar />
-      {children}
+
+      <main className="pt-20 min-h-screen">
+        {children}
+      </main>
+
       <Footer />
       <ChatbotWidget />
     </>

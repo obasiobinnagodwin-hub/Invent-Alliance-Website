@@ -1,191 +1,201 @@
-import Footer from '@/components/Footer';
 import Image from 'next/image';
+import PageLayout from '@/components/layout/PageLayout';
+import PageHero from '@/components/ui/PageHero';
+import Section from '@/components/ui/Section';
+import Card from '@/components/ui/Card';
 
 export const metadata = {
   title: 'About Us - Invent Alliance Limited',
-  description: 'Discover Invent Alliance Limited: A globally recognized multi-sector enterprise delivering innovative business solutions through strategic partnerships. Learn about our mission, values, diverse portfolio, and commitment to excellence.',
-  openGraph: {
-    title: 'About Us - Invent Alliance Limited',
-    description: 'A forward-thinking, diversified multi-sector enterprise pioneering innovative business platforms through strategic partnerships and collaborative value creation.',
-    type: 'website',
-  },
+  description:
+    'Discover Invent Alliance Limited: A globally recognized multi-sector enterprise delivering innovative business solutions.',
 };
 
 const teamMembers = [
   {
-    name: 'Francis Chidebe ',
-    description: 'Chartered Accountant and management professional leading Finance and Admin at Invent Alliance Limited....',
-    imageUrl: '/images/francis.jpg', // local image}
+    name: 'Francis Chidebe',
+    description:
+      'Chartered Accountant and management professional leading Finance and Admin at Invent Alliance Limited.....',
+    imageUrl: '/images/francis.jpg',
   },
   {
-    name: 'Nmesoma Favour David ',
-    description: 'Facility Manager with a Civil Engineering background and hands-on construction experience....',
-    imageUrl: '/images/favour.jpg', // local image}
-  },  
+    name: 'Nmesoma Favour David',
+    description:
+      'Facility Manager with a Civil Engineering background and hands-on construction experience.....',
+    imageUrl: '/images/favour.jpg',
+  },
   {
     name: 'Christopher Odinakachi',
-    description: 'Customer Relations Officer with experience in sales support and customer engagement.....',
-    imageUrl: '/images/christopher.jpg', // local image}
-  }, 
+    description:
+      'Customer Relations Officer with experience in sales support and customer engagement.....',
+    imageUrl: '/images/christopher.jpg',
+  },
   {
     name: 'Obasi Obinna Godwin',
-    description: 'IT and cybersecurity professional specializing in network security and infrastructure reliability....',
-    imageUrl: '/images/obinna.jpg', // local image}
+    description:
+      'IT and cybersecurity professional specializing in network security and infrastructure reliability.....',
+    imageUrl: '/images/obinna.jpg',
   },
   {
     name: 'Chizoba Ezeigwe',
-    description: 'Hospitality and operations professional specializing in serviced apartment management and customer experience....',
-    imageUrl: '/images/chizoba.jpg', // local image}
+    description:
+      'Hospitality and operations professional specializing in serviced apartment management.....',
+    imageUrl: '/images/chizoba.jpg',
   },
   {
     name: 'Okechukwu Umeham',
-    description: 'Bakery Operations Manager with fifteen years of experience in large scale production, quality control, and operational efficiency...',
-    imageUrl: '/images/okechukwu.jpg', // local image}
+    description:
+      'Bakery Operations Manager with extensive experience in large-scale production.....',
+    imageUrl: '/images/okechukwu.jpg',
   },
 ];
 
 const values = [
-  { 
-    title: 'Customer Excellence', 
-    description: 'We forge strategic, long-term partnerships with our clients, delivering innovative solutions and exceptional service excellence that consistently exceed expectations. Our commitment to understanding and anticipating client needs drives our continuous pursuit of superior value creation across all business segments.' 
+  {
+    title: 'Customer Excellence',
+    description:
+      'We build long-term partnerships and deliver solutions that consistently exceed expectations.',
   },
-  { 
-    title: 'Global Quality Standards', 
-    description: 'We maintain world-class quality standards through continuous innovation, diverse product portfolios, and proactive adaptation to evolving global industry trends. Our rigorous quality assurance processes ensure compliance with international best practices while meeting the unique requirements of local and international markets.' 
+  {
+    title: 'Global Quality Standards',
+    description:
+      'We maintain world-class standards through innovation and best practices.',
   },
-  { 
-    title: 'Strategic Partnerships', 
-    description: 'We cultivate robust, mutually beneficial relationships with our supplier network, fostering collaboration and reliability. Through transparent communication and ethical business practices, we ensure sustainable value creation for all stakeholders while maintaining the highest standards of corporate governance and shareholder value enhancement.' 
+  {
+    title: 'Strategic Partnerships',
+    description:
+      'We create sustainable value through trusted collaborations and ethical practices.',
   },
-  { 
-    title: 'People & Culture', 
-    description: 'We invest in our people as our most valuable asset, creating an inclusive, high-performance culture that empowers professional growth and career advancement. Our commitment includes providing a safe, rewarding work environment, competitive compensation, and recognition programs that celebrate excellence and innovation in service delivery.' 
+  {
+    title: 'People & Culture',
+    description:
+      'We empower our people with growth opportunities in a high-performance environment.',
   },
-  { 
-    title: 'Innovation & Technology', 
-    description: 'We leverage cutting-edge technology and industry expertise to deliver customized solutions across all sectors, optimizing quality, functionality, and value. Our technical consulting services enable clients to enhance their competitive advantage through strategic product development and service optimization initiatives.' 
+  {
+    title: 'Innovation & Technology',
+    description:
+      'We leverage modern technology to deliver scalable and efficient solutions.',
   },
-  { 
-    title: 'Sustainable Growth', 
-    description: 'We drive sustainable, profitable growth through strategic management, operational excellence, and prudent financial stewardship. Our diversified business model ensures long-term financial stability while delivering exceptional returns through the strategic marketing and delivery of premium products and services across multiple industry verticals.' 
+  {
+    title: 'Sustainable Growth',
+    description:
+      'We ensure long-term success through strategic management and operational excellence.',
   },
 ];
 
 export default function AboutUs() {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800">
-      <main className="flex-grow py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-extrabold text-white mb-8 text-elevated-strong">About Us</h1>
+    <PageLayout>
+      {/* HERO */}
+      <PageHero
+        title="About Us"
+        subtitle="Building innovative business ecosystems through strategic partnerships"
+      />
 
-          {/* Company Description */}
-          <section className="mb-12">
-            <h3 className="text-2xl font-bold text-white mb-4 text-elevated-bold">About Invent Alliance Limited</h3>
-            <p className="text-white mb-4 font-medium leading-relaxed text-lg">
-              Invent Alliance Limited is a globally recognized, diversified multi-sector enterprise that specializes in creating innovative business ecosystems through strategic partnerships and collaborative value creation. We operate on the principle of co-opetition; a forward-thinking business model that harmonizes collaboration with competitive excellence. This enables us to deliver exceptional value across diverse industry sectors while maintaining our position as a trusted partner to clients, stakeholders, and communities worldwide.
-            </p>
-            <p className="text-white mb-4 font-medium leading-relaxed">
-              Our unique organizational architecture is built around autonomous Strategic Business Units (SBUs), each operating with complete profit and loss accountability. This decentralized, entrepreneurial model empowers our teams to respond swiftly to market opportunities, make data-driven decisions, and drive innovation while maintaining strategic alignment with our unified corporate mission and values.
-            </p>
-            <p className="text-white mb-4 font-medium leading-relaxed">
-              With a presence spanning multiple continents and a commitment to excellence, we leverage our diverse expertise to create sustainable, scalable solutions that address complex business challenges. Our integrated approach enables cross-sector synergies, knowledge sharing, and resource optimization, resulting in enhanced value delivery across all our business segments.
-            </p>
-            <div className="mt-6 p-6 glass-dark rounded-lg border border-slate-600/50">
-              <h4 className="text-xl font-bold text-white mb-4 text-elevated-bold">Our Strategic Business Units</h4>
-              <p className="text-white/90 mb-4 font-medium">
-                Our diversified portfolio encompasses the following strategic sectors, each managed by dedicated teams of industry experts:
-              </p>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-white/90 font-medium">
-                <li className="flex items-start">
-                  <span className="text-blue-300 mr-2">•</span>
-                  <span>Real Estate Development & Property Management</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-blue-300 mr-2">•</span>
-                  <span>Energy & Power Solutions</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-blue-300 mr-2">•</span>
-                  <span>Food & Beverage Services (Bakery & Confectionery)</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-blue-300 mr-2">•</span>
-                  <span>Business Process Outsourcing & Digital Services</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-blue-300 mr-2">•</span>
-                  <span>Logistics & Supply Chain Management</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-blue-300 mr-2">•</span>
-                  <span>Hospitality & Short-Term Accommodation</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-blue-300 mr-2">•</span>
-                  <span>Virtual Office & Hosted Business Services</span>
-                </li>
-              </ul>
-            </div>
-          </section>
+      {/* COMPANY */}
+      <Section>
+        <h2 className="text-2xl font-semibold text-[var(--invent-blue-50)] mb-4">
+          About Invent Alliance Limited
+        </h2>
 
-          {/* Mission Statement */}
-          <section className="mb-12">
-            <h3 className="text-2xl font-bold text-white mb-2 text-elevated-bold">Mission Statement</h3>
-            <p className="text-white/90 mb-6 font-medium leading-relaxed max-w-4xl">
-              To be a globally recognized leader in multi-sector business innovation, delivering exceptional value through strategic partnerships, operational excellence, and sustainable growth. We are committed to transforming industries, empowering communities, and creating lasting impact through our diverse portfolio of world-class products and services.
-            </p>
-            <h4 className="text-xl font-bold text-white mb-4 text-elevated-bold mt-8">Our Core Values</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {values.map((value, index) => (
-                <div key={index} className="glass-dark p-6 rounded-lg shadow-xl border border-slate-600/50 hover:border-slate-500/70 transition-all duration-300">
-                  <h5 className="text-lg font-bold text-white mb-3 text-elevated">{value.title}</h5>
-                  <p className="text-white/90 text-sm font-medium leading-relaxed">{value.description}</p>
-                </div>
-              ))}
-            </div>
-          </section>
+        <div className="space-y-4 text-gray-200 leading-relaxed">
+          <p>
+            Invent Alliance Limited is a diversified multi-sector enterprise
+            focused on building innovative business ecosystems through
+            strategic partnerships and collaborative value creation.
+          </p>
 
-          {/* Team Section */}
-          <section className="mb-12">
-            <h4 className="text-2xl font-bold text-white mb-4 text-elevated-bold">Leadership Team</h4>
-            <p className="text-white/90 mb-6 font-medium leading-relaxed max-w-3xl">
-              Our leadership team comprises accomplished professionals with diverse expertise spanning finance, human resources, operations, and strategic management. Their collective experience and commitment to excellence drive our organization&apos;s continued growth and success in delivering world-class solutions to our global clientele.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {teamMembers.map((member, index) => (
-                <div key={index} className="glass-dark rounded-lg shadow-xl overflow-hidden border border-slate-700/50 hover:border-slate-500/70 transition-all duration-300">
-                  <div className="relative h-64 w-full aspect-square overflow-hidden bg-slate-700 flex items-center justify-center">
-                    {member.imageUrl.includes('ui-avatars.com') || member.description === 'Updating...' ? (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-600">
-                        <span className="text-white text-6xl font-bold">{member.name.split(' ').map(n => n[0]).join('')}</span>
-                      </div>
-                    ) : (
-                      <Image
-                        src={member.imageUrl}
-                        alt={member.name}
-                        fill
-                        className="object-cover brightness-110 contrast-110"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                        loading="lazy"
-                        quality={90}
-                        placeholder="blur"
-                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                      />
-                    )}
-                    <div className="absolute inset-0 ring-2 ring-white/10"></div>
-                  </div>
-                  <div className="p-4">
-                    <h4 className="text-lg font-bold text-white mb-2 text-elevated">{member.name}</h4>
-                    <p className="text-white text-sm font-medium">{member.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+          <p>
+            Our structure is built around autonomous Strategic Business Units
+            (SBUs), enabling agility, innovation, and data-driven
+            decision-making across all sectors.
+          </p>
+
+          <p>
+            With a growing presence and commitment to excellence, we deliver
+            scalable solutions across multiple industries while maintaining
+            strong alignment with our corporate mission.
+          </p>
         </div>
-      </main>
-      {/* <Footer /> */}
-    </div>
+
+        {/* BUSINESS UNITS */}
+        <div className="mt-8">
+          <Card>
+            <h3 className="text-xl font-semibold text-[var(--invent-blue-700)] mb-4">
+              Our Strategic Business Units
+            </h3>
+
+            <ul className="grid md:grid-cols-2 gap-3 text-gray-700">
+              {[
+                'Real Estate Development & Property Management',
+                'Energy & Power Solutions',
+                'Food & Beverage Services',
+                'Business Process Outsourcing',
+                'Logistics & Supply Chain',
+                'Hospitality & Accommodation',
+                'Virtual Office Services',
+              ].map((item, i) => (
+                <li key={i} className="flex gap-2">
+                  <span className="text-[var(--invent-blue-600)]">•</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </Card>
+        </div>
+      </Section>
+
+      {/* VALUES */}
+      <Section>
+        <h2 className="text-2xl font-semibold text-[var(--invent-blue-50)] mb-6">
+          Our Core Values
+        </h2>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {values.map((value, i) => (
+            <Card key={i}>
+              <h3 className="font-semibold text-[var(--invent-blue-700)] mb-2">
+                {value.title}
+              </h3>
+              <p className="text-gray-600 text-sm">
+                {value.description}
+              </p>
+            </Card>
+          ))}
+        </div>
+      </Section>
+
+      {/* TEAM */}
+      <Section>
+        <h2 className="text-2xl font-semibold text-[var(--invent-blue-50)] mb-6">
+          Leadership Team
+        </h2>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {teamMembers.map((member, i) => (
+            <Card key={i}>
+              <div className="relative h-64 w-full bg-gray-100">
+                <Image
+                  src={member.imageUrl}
+                  alt={member.name}
+                  fill
+                  className="object-cover brightness-110 contrast-110"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                  loading="lazy"
+                  quality={90}
+                />
+              </div>
+
+              <h3 className="font-semibold text-[var(--invent-blue-700)] mb-1">
+                {member.name}
+              </h3>
+
+              <p className="text-gray-600 text-sm">
+                {member.description}
+              </p>
+            </Card>
+          ))}
+        </div>
+      </Section>
+    </PageLayout>
   );
 }
-

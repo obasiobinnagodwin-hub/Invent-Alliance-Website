@@ -1,164 +1,142 @@
-import Footer from '@/components/Footer';
+import PageLayout from '@/components/layout/PageLayout';
 import ServiceCard from '@/components/ServiceCard';
-import StructuredData from '@/components/StructuredData';
+import HeroCarousel from '@/components/HeroCarousel';
 import Link from 'next/link';
 
-// Force static generation
+// ⚠️ REMOVE StructuredData + Reveal for now (they are likely causing the crash)
+
 export const dynamic = 'force-static';
 export const revalidate = false;
 
 export const metadata = {
   title: 'Home',
-  description: 'Invent Alliance Limited is a company specialized on creation of multi sector and multi discipline business platform with specialist partnerships for value co-creation.',
-  openGraph: {
-    title: 'Home - Invent Alliance Limited',
-    description: 'Invent Alliance Limited is a company specialized on creation of multi sector and multi discipline business platform with specialist partnerships for value co-creation.',
-    type: 'website',
-  },
-};
-
-const organizationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'Invent Alliance Limited',
-  url: 'https://www.inventallianceco.com',
-  logo: 'https://www.inventallianceco.com/wp-content/uploads/2018/01/invent_mainx1.png',
-  description: 'Invent Alliance Limited is a company specialized on creation of multi sector and multi discipline business platform with specialist partnerships for value co-creation.',
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Lagos',
-    addressCountry: 'NG',
-  },
-  sameAs: [
-    // Add social media links when available
-    
-  ],
+  description:
+    'Invent Alliance Limited is a company specialized on creation of multi sector and multi discipline business platform with specialist partnerships for value co-creation.',
 };
 
 const services = [
   {
     title: 'Bakery Services & Consultancy',
-    description: 'Our Bakery consultancy covers different aspects of bakery business from local recipe and ingredients development to innovation …',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2016/01/invent_bakery_services-512x364.png',
+    description:
+      'Our Bakery consultancy covers different aspects of bakery business from local recipe and ingredients development to innovation.',
+    imageUrl: '/images/services/bakery.jpg',
     imageAlt: 'invent_bakery_services',
     linkUrl: 'https://ovenfreshng.com/',
     external: true,
   },
   {
     title: 'Business Process Outsourcing',
-    description: 'Digital telemarketing services, Sales Lead generation services, Business Awareness services, Contract Publishing services…',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2019/02/bpo-consulting-services.png',
+    description:
+      'Digital telemarketing, sales lead generation, business awareness, and contract publishing services.',
+    imageUrl: '/images/services/bpo.jpg',
     imageAlt: 'Business Process Outsourcing Services',
     linkUrl: 'https://bpo.inventallianceco.com/',
     external: true,
   },
   {
-    title: 'Virtual Office & Hosted Services Business Unit',
-    description: 'Hosted office space services, Hosted shared services (secretarial, admin, HR, legal, accounting, etc), Video conferencing services…',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2018/08/visual_office2-512x364.jpg',
+    title: 'Virtual Office & Hosted Services',
+    description:
+      'Hosted office space, admin support, HR, legal, accounting, and conferencing services.',
+    imageUrl: '/images/services/virtual-office.jpg',
     imageAlt: 'visual_office2',
     linkUrl: '/services/visual-office-hosted-services-business-unit/',
-    external: false,
   },
   {
-    title: 'High Tech Logistics Business Unit',
-    description: 'This service consist of: Warehouse as A Service (WaAS) storage services, Cold room storage services, Goods dispatching services…',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2018/08/logistics2-512x364.jpg',
+    title: 'High Tech Logistics',
+    description:
+      'Warehouse services, cold storage, and goods dispatching solutions.',
+    imageUrl: '/images/services/logistics.jpg',
     imageAlt: 'logistics2',
     linkUrl: 'https://logistics.inventallianceco.com',
     external: true,
   },
   {
     title: 'Invent Power',
-    description: 'Invent Power Systems specializes in sales, designed to meet the everyday need of people leveraging on energy and power solutions.',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2021/06/invent_batteries_abt-512x364.jpg',
+    description:
+      'Reliable energy and power solutions designed for everyday needs.',
+    imageUrl: '/images/services/power.jpg',
     imageAlt: 'invent_batteries_abt',
     linkUrl: 'https://power.inventallianceco.com/',
     external: true,
   },
   {
     title: 'Invent Properties',
-    description: 'We are a well-rounded real estate development firm that specializes in the full spectrum services for the construction and real estate industry.',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2023/06/invent-shortlet-home-scaled-1-512x364.jpg',
-    imageAlt: 'Tokyo(Invent)-7',
+    description:
+      'Real estate development and construction services across multiple sectors.',
+    imageUrl: '/images/services/properties.jpg',
+    imageAlt: 'invent properties',
     linkUrl: 'https://properties.inventallianceco.com/',
     external: true,
   },
   {
     title: 'Invent Shortlet',
-    description: 'Invent Apartment (Short-let) are tastefully designed for executives with top notch facilities that matches the global trend for hospitality.',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2023/06/TokyoInvent-7-512x364.jpg',
-    imageAlt: 'invent-shortlet-home-scaled',
+    description:
+      'Tastefully designed short-let apartments with premium facilities.',
+    imageUrl: '/images/services/shortlet.jpg',
+    imageAlt: 'Invent Shortlet',
     linkUrl: 'https://shortlet.inventallianceco.com',
     external: true,
   },
   {
     title: 'iWorkZone',
-    description: 'A creative fully furnished work station located in the heart of Ajah, which has a kitchenette and ofcourse 24/7 power and fast internet access..',
-    imageUrl: 'https://www.inventallianceco.com/wp-content/uploads/2025/12/iwork-zone-desk-scaled-1-512x364.jpg',
-    imageAlt: 'iwork-zone-desk-scaled',
-    linkUrl: 'https://iworkzone.ng/',
+    description:
+      'Flexible coworking and office solutions designed for productivity and collaboration.',
+    imageUrl: '/images/services/iworkzone.jpg',
+    imageAlt: 'iWorkZone',
+    linkUrl: 'https://iworkzone.ng',
     external: true,
-  },
-];
-
-const recentNews = [
-  {
-    title: 'An Appreciation from Lead-Fort Gate College',
-    date: 'June 5, 2023',
-    slug: '/an-appreciation-from-lead-fort-gate-college',
-  },
-  {
-    title: "National Open University Students' Tour At The Invent",
-    date: 'April 20, 2023',
-    slug: '/national-open-university-students-tour-at-the-invent',
   },
 ];
 
 export default function Home() {
   return (
     <>
-      <StructuredData data={organizationSchema} />
-      <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800">
-        <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="relative bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 py-20 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-indigo-500/10 to-cyan-500/10"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.08),transparent_50%)]"></div>
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
-            <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-center text-white text-elevated-strong">
-              Our vision is to create a multi-business alliance through development of a multi sector
-            </h2>
-            <div className="text-center">
-              <Link
-                href="/products-services"
-                className="inline-block bg-white text-slate-800 px-8 py-3 rounded-lg font-semibold hover:bg-slate-100 transition-all duration-300 shadow-lg hover:shadow-xl relative overflow-hidden group"
-              >
-                <span className="relative z-10">find out how</span>
-              </Link>
-            </div>
-          </div>
-        </section>
+      {/* HERO */}
+      <section className="relative h-[90vh] overflow-hidden">
+        <HeroCarousel />
+      </section>
 
-        {/* Products & Services Section */}
-        <section className="py-16 bg-gradient-to-b from-slate-800 via-slate-700/40 to-slate-800 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(59,130,246,0.06),transparent_50%)]"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(99,102,241,0.06),transparent_50%)]"></div>
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
-            <h2 className="text-3xl font-extrabold text-center text-white mb-12 text-elevated-bold">
-              Our Products & Services
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {services.map((service, index) => (
-                <ServiceCard key={index} {...service} />
-              ))}
-            </div>
-          </div>
-        </section>
-      </main>
-      {/* <Footer /> */}
-    </div>
+      {/* TRUST SECTION */}
+      <section className="bg-invent-soft py-16">
+        <div className="flex flex-wrap justify-center items-center gap-8 text-muted text-sm">
+          <span>Trusted in Warehousing & Logistics</span>
+          <span>Energy Solutions</span>
+          <span>Enterprise Services</span>
+          <span>Apartments & Shortlet Management</span>
+          <span>Property Development & Management</span>
+        </div>
+      </section>
+
+      {/* SERVICES */}
+      <section className="py-24 bg-light">
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-[var(--invent-blue-700)] mb-12">
+          Our Products & Services
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          {services.map((service, index) => (
+            <ServiceCard key={index} {...service} />
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+<section className="bg-invent-dark text-white py-20 text-center">
+  <h2 className="text-4xl font-bold text-[var(--invent-blue 50)]">
+    Ready to Transform Your Business?
+  </h2>
+
+  <p className="mt-4 text-[var(--invent-yellow)]">
+    Let’s build scalable and secure solutions together.
+  </p>
+
+  <Link
+    href="/contacts"
+    className="inline-block mt-6 bg-[var(--invent-yellow)] text-black px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition"
+  >
+    Contact Us
+  </Link>
+</section>
     </>
   );
 }
-

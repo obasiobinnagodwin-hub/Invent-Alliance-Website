@@ -1,29 +1,28 @@
-// app/about-us/page.tsx  (or wherever your team page lives)
-
 import Image from 'next/image';
 import Link from 'next/link';
+import PageLayout from "@/components/layout/PageLayout";
+import PageHero from "@/components/ui/PageHero";
+import Section from "@/components/ui/Section";
+import Card from "@/components/ui/Card";
 import { staffMembers } from '@/data/staff';
 
 export default function OurTeam() {
   return (
-    // PAGE WRAPPER
-    <section className="min-h-screen bg-white py-16">
-      <div className="max-w-7xl mx-auto px-6">
-        
-        {/* PAGE TITLE */}
-        <h1 className="text-4xl font-bold text-[#F4C430] text-center mb-12">
-          Our Team
-        </h1>
+    <PageLayout>
 
-        {/* TEAM GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <PageHero
+        title="Our Team"
+        subtitle="Meet the professionals driving innovation and excellence at Invent Alliance."
+      />
+
+      <Section>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
           {staffMembers.map((member) => (
-            <div
-              key={member.slug}
-              className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
-            >
+            <div key={member.slug} className="overflow-hidden">
+              <Card>
+
               {/* IMAGE */}
-              <div className="relative h-64">
+              <div className="relative h-64 w-full bg-gray-100">
                 <Image
                   src={member.image}
                   alt={member.name}
@@ -33,12 +32,12 @@ export default function OurTeam() {
               </div>
 
               {/* CONTENT */}
-              <div className="p-6">
+              <div className="p-5">
                 <h3 className="text-lg font-semibold text-gray-900">
                   {member.name}
                 </h3>
 
-                <p className="text-sm text-yellow-700 mb-2">
+                <p className="text-sm text-[var(--invent-yellow)] mb-2">
                   {member.title}
                 </p>
 
@@ -48,16 +47,18 @@ export default function OurTeam() {
 
                 <Link
                   href={`/staff/${member.slug}`}
-                  className="text-yellow-600 hover:text-yellow-700 font-medium"
+                  className="text-[var(--invent-blue)] hover:underline font-medium"
                 >
                   View profile →
                 </Link>
               </div>
+
+            </Card>
             </div>
           ))}
         </div>
+      </Section>
 
-      </div>
-    </section>
+    </PageLayout>
   );
 }

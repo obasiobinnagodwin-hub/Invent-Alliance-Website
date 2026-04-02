@@ -1,14 +1,13 @@
-import Footer from '@/components/Footer';
+import PageLayout from '@/components/layout/PageLayout';
+import PageHero from '@/components/ui/PageHero';
+import Section from '@/components/ui/Section';
+import Card from '@/components/ui/Card';
 import ServiceCard from '@/components/ServiceCard';
 
 export const metadata = {
   title: 'Products & Services',
-  description: 'Explore our comprehensive range of products and services including Bakery Services, Business Process Outsourcing, Real Estate, Logistics, Power Systems, and more.',
-  openGraph: {
-    title: 'Products & Services - Invent Alliance Limited',
-    description: 'Explore our comprehensive range of products and services.',
-    type: 'website',
-  },
+  description:
+    'Explore our comprehensive range of products and services including Bakery Services, BPO, Real Estate, Logistics, Power Systems, and more.',
 };
 
 const services = [
@@ -80,19 +79,36 @@ const services = [
 
 export default function ProductsServices() {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-800 via-slate-700/50 to-slate-800">
-      <main className="flex-grow py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-extrabold text-white mb-12 text-center text-elevated-strong">Our Products & Services</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <ServiceCard key={index} {...service} />
-            ))}
-          </div>
+    <PageLayout>
+
+      {/* HERO */}
+      <PageHero
+        title="Our Products & Services"
+        subtitle="Delivering value across multiple industries through innovation and expertise."
+      />
+
+      {/* CONTENT */}
+      <Section className="max-w-7xl mx-auto">
+
+        {/* INTRO */}
+        <div className="text-center mb-12">
+          <p className="text-gray-100 max-w-2xl mx-auto">
+            Explore our diverse portfolio of services designed to meet modern business
+            and lifestyle needs across multiple sectors.
+          </p>
         </div>
-      </main>
-      {/* <Footer /> */}
-    </div>
+
+        {/* SERVICES GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {services.map((service, index) => (
+            <Card key={index} className="p-0 overflow-hidden">
+              <ServiceCard {...service} />
+            </Card>
+          ))}
+        </div>
+
+      </Section>
+
+    </PageLayout>
   );
 }
-
