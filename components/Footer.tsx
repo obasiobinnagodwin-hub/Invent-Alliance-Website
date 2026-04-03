@@ -103,7 +103,9 @@ export default function Footer() {
           {/* SOCIALS */}
           <div className="flex gap-5 text-lg">
             <a
-              href="#"
+             href="https://www.facebook.com/inventalliancelimited"
+             target="_blank"
+             rel="noopener noreferrer"
               className="text-white/70 hover:text-[var(--invent-yellow)] transition transform hover:scale-110"
             >
               <FaFacebookF />
@@ -117,7 +119,9 @@ export default function Footer() {
             </a>
 
             <a
-              href="#"
+              href="https://www.instagram.com/inventalliance?igsh=aWk2ajdsY2Z4Nm"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-white/70 hover:text-[var(--invent-yellow)] transition transform hover:scale-110"
             >
               <FaInstagram />
