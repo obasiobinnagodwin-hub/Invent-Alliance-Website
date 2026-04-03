@@ -4,22 +4,26 @@ import PageLayout from '@/components/layout/PageLayout';
 import PageHero from '@/components/ui/PageHero';
 import Section from '@/components/ui/Section';
 import Card from '@/components/ui/Card';
-import { blogPosts } from '@/data/blogPosts';
+import { blogPosts, BlogPost } from '@/data/blogPosts';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
-export function generateStaticParams() {
+// ✅ Static generation
+export async function generateStaticParams() {
   return blogPosts.map((post) => ({
     slug: post.slug,
   }));
 }
 
-export function generateMetadata({ params }: PageProps) {
-  const post = blogPosts.find((p) => p.slug === params.slug);
+// ✅ Metadata (Next 16 fix)
+export async function generateMetadata({ params }: PageProps) {
+  const { slug } = await params;
+
+  const post = blogPosts.find((p) => p.slug === slug);
 
   if (!post) return {};
 
@@ -29,8 +33,13 @@ export function generateMetadata({ params }: PageProps) {
   };
 }
 
-export default function BlogPost({ params }: PageProps) {
-  const post = blogPosts.find((p) => p.slug === params.slug);
+// ✅ Page
+export default async function BlogPostPage({ params }: PageProps) {
+  const { slug } = await params;
+
+  const post: BlogPost | undefined = blogPosts.find(
+    (p) => p.slug === slug
+  );
 
   if (!post) return notFound();
 
@@ -42,22 +51,33 @@ export default function BlogPost({ params }: PageProps) {
         <Card className="space-y-6">
 
           {post.content.map((block, index) => {
+            
+            // ✅ Paragraph
             if (block.type === 'paragraph') {
               return (
-                <p key={index} className="text-slate-700 leading-relaxed">
+                <p
+                  key={index}
+                  className="text-slate-700 leading-relaxed text-base"
+                >
                   {block.text}
                 </p>
               );
             }
 
-            if (block.type === 'image') {
+            // ✅ Image (safe)
+            if (block.type === 'image' && block.src) {
               return (
-                <div key={index} className="relative w-full h-64">
+                <div
+                  key={index}
+                  className="relative w-full h-64 md:h-80"
+                >
                   <Image
                     src={block.src}
-                    alt={block.alt}
+                    alt={block.alt || 'Blog image'}
                     fill
-                    className="object-cover rounded-lg"
+                    className="object-cover rounded-xl"
+                    sizes="(max-width: 768px) 100vw, 768px"
+                    priority={index === 0}
                   />
                 </div>
               );

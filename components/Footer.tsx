@@ -1,19 +1,13 @@
+'use client';
+
 import Link from 'next/link';
 import { FaFacebookF, FaTwitter, FaInstagram } from "react-icons/fa";
+import { blogPosts } from '@/data/blogPosts';
 
 export default function Footer() {
-  const recentNews = [
-    {
-      title: "An Appreciation from Lead-Fort Gate College",
-      date: "June 5, 2023",
-      slug: "/an-appreciation-from-lead-fort-gate-college"
-    },
-    {
-      title: "National Open University Students' Tour At The Invent",
-      date: "April 20, 2023",
-      slug: "/national-open-university-students-tour-at-the-invent"
-    }
-  ];
+
+  // ✅ Get latest 2 posts
+  const recentNews = blogPosts.slice(0, 2);
 
   return (
     <footer className="bg-invent-dark text-white relative overflow-hidden">
@@ -51,16 +45,17 @@ export default function Footer() {
             </h4>
 
             <ul className="space-y-4">
-              {recentNews.map((news, index) => (
-                <li key={index}>
+              {recentNews.map((post) => (
+                <li key={post.slug}>
                   <Link
-                    href={news.slug}
+                    href={`/blog/${post.slug}`} // ✅ FIXED ROUTE
                     className="text-sm font-medium text-white hover:text-[var(--invent-yellow)] transition"
                   >
-                    {news.title}
+                    {post.title}
                   </Link>
+
                   <p className="text-xs text-white/60 mt-1">
-                    {news.date}
+                    {post.date}
                   </p>
                 </li>
               ))}
@@ -83,8 +78,8 @@ export default function Footer() {
                 { name: "Careers", href: "/careers" },
                 { name: "Invent Academy", href: "/invent-academy-registration" },
                 { name: "Contact", href: "/contacts" },
-              ].map((link, index) => (
-                <li key={index}>
+              ].map((link) => (
+                <li key={link.name}>
                   <Link
                     href={link.href}
                     className="text-sm text-white/80 hover:text-[var(--invent-yellow)] transition"
@@ -98,7 +93,7 @@ export default function Footer() {
         </div>
 
         {/* BOTTOM */}
-        <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row items flex justify-center gap-6">
+        <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-center items-center gap-6">
 
           <div className="text-sm text-white/70 text-center md:text-left">
             <p>&copy; {new Date().getFullYear()} Invent Alliance Limited. All rights reserved.</p>
