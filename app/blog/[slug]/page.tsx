@@ -6,8 +6,10 @@ import Section from '@/components/ui/Section';
 import Card from '@/components/ui/Card';
 import { blogPosts } from '@/data/blogPosts';
 
-interface Params {
-  slug: string;
+interface PageProps {
+  params: {
+    slug: string;
+  };
 }
 
 export function generateStaticParams() {
@@ -16,7 +18,7 @@ export function generateStaticParams() {
   }));
 }
 
-export function generateMetadata({ params }: { params: Params }) {
+export function generateMetadata({ params }: PageProps) {
   const post = blogPosts.find((p) => p.slug === params.slug);
 
   if (!post) return {};
@@ -27,7 +29,7 @@ export function generateMetadata({ params }: { params: Params }) {
   };
 }
 
-export default function BlogPost({ params }: { params: Params }) {
+export default function BlogPost({ params }: PageProps) {
   const post = blogPosts.find((p) => p.slug === params.slug);
 
   if (!post) return notFound();
