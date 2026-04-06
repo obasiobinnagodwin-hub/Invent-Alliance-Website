@@ -32,7 +32,7 @@ export default function OurTeam() {
               </div>
 
               {/* CONTENT */}
-              <div className="p-5 text-justify">
+              <div className="p-5">
                 <h3 className="text-lg font-semibold text-gray-900">
                   {member.name}
                 </h3>
