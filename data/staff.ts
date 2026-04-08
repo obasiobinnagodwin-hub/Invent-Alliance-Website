@@ -50,14 +50,18 @@ Odinakachi Chibuike Christopher is a Customer Relations Officer with four years 
 Obasi Obinna Godwin is an IT and cybersecurity professional with over six years of experience in IT support and network engineering, and two years of hands-on experience in cybersecurity. He specializes in network security, incident response, vulnerability assessment, and infrastructure monitoring, supporting reliable and secure technology environments. Godwin has led enterprise and residential network deployments, including fiber and FTTX implementations, while providing continuous monitoring and actionable security insights to ensure system availability and resilience. Known for his analytical mindset and results-driven approach, he strengthens organizational security posture and operational performance.`,
   },
   {
-    slug: 'chizoba-ezeigwe',
-    name: 'Chizoba Ezeigwe',
+    slug: 'ogechi-eze',
+    name: 'Ogechi Vincentia Eze',
     title: 'Shortlet Manager',
-    image: '/images/chizoba.jpg',
+    image: '/images/ogechi.jpg',
     shortBio:
-      'Chizoba Ezeigwe is a hospitality and operations management professional with experience in serviced apartment operations, guest relations, and administrative coordination, focused on delivering excellent customer experiences.',
+      'Ogechi is a results driven Shortlet and Apartment Manager specializing in property operations, guest experience, booking optimization, and revenue growth. She leverages strong administrative and marketing expertise to maximize occupancy and deliver exceptional service.',
     bio: `
-Chizoba Ezeigwe is an operations and hospitality management professional based in Lagos, Nigeria, with expertise in serviced apartment management, customer experience, and administrative operations. She manages short-term rental properties, overseeing daily operations, guest relations, facility coordination, and vendor management to ensure seamless service delivery and high guest satisfaction. Chizoba works closely with digital marketing teams to drive occupancy and align operational efficiency with business goals. Recognized for her professionalism, attention to detail, and collaborative approach, she brings practical leadership and creative problem-solving to every role she undertakes.`,
+Ogechi Vincentia Eze is a versatile and results-oriented Shortlet and Apartment Manager with a strong track record in property operations, guest experience, booking optimization, and revenue growth. She consistently delivers high occupancy rates while maintaining exceptional service standards.
+
+With a solid background in administration, she efficiently manages business processes, scheduling, and day to day operations. Her experience in marketing and digital media enables her to execute strategic campaigns, manage social media platforms, and enhance brand visibility and engagement.
+
+Ogechi also brings analytical strength from her academic background and foundational cybersecurity knowledge, ensuring secure digital practices and data protection across operations. Her multidisciplinary skill set allows her to drive efficiency, profitability, and a seamless client experience. Recognized for her professionalism, attention to detail, and collaborative approach, she brings practical leadership and creative problem solving to every role she undertakes.`,
   },
   {
     slug: 'okechukwu-umeham',

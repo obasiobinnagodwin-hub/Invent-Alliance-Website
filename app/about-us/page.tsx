@@ -36,10 +36,10 @@ const teamMembers = [
     imageUrl: '/images/obinna.jpg',
   },
   {
-    name: 'Chizoba Ezeigwe',
+    name: 'Ogechi Vincentia Eze',
     description:
       'Hospitality and operations professional specializing in serviced apartment management.....',
-    imageUrl: '/images/chizoba.jpg',
+    imageUrl: '/images/ogechi.jpg',
   },
   {
     name: 'Okechukwu Umeham',
