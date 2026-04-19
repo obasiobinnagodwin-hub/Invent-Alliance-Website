@@ -55,7 +55,7 @@ Obasi Obinna Godwin is an IT and cybersecurity professional with over six years 
     title: 'Shortlet Manager',
     image: '/images/ogechi.jpg',
     shortBio:
-      'Ogechi is a results driven Shortlet and Apartment Manager specializing in property operations, guest experience, booking optimization, and revenue growth. She leverages strong administrative and marketing expertise to maximize occupancy and deliver exceptional service.',
+      'Ogechi is a results-driven shortlet and apartment manager focused on optimizing operations, enhancing guest experience, and maximizing occupancy and revenue through strong administrative and marketing expertise',
     bio: `
 Ogechi Vincentia Eze is a versatile and results-oriented Shortlet and Apartment Manager with a strong track record in property operations, guest experience, booking optimization, and revenue growth. She consistently delivers high occupancy rates while maintaining exceptional service standards.
 

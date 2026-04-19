@@ -50,16 +50,50 @@ export default function AcademyPage() {
     return Object.keys(err).length === 0;
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    if (!validate()) return;
+  if (!validate()) return;
 
-    setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1000));
+  setIsSubmitting(true);
+
+  try {
+    const res = await fetch('/api/academy-registration', { // ⚠️ make sure this matches your route folder
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Submission failed');
+    }
+
+    // ✅ SUCCESS
+    alert(data.message || 'Submitted successfully');
+
+    // ✅ RESET FORM
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      ageRange: '',
+      stream: '',
+      message: '',
+      company: '',
+    });
+
+    setErrors({});
+  } catch (error: any) {
+    console.error(error);
+    alert(error.message || 'Something went wrong');
+  } finally {
     setIsSubmitting(false);
+  }
 
-    alert('Submitted successfully');
   };
 
   const handleChange = (e: any) => {
@@ -95,6 +129,7 @@ export default function AcademyPage() {
             <div>
               <input
                 name="name"
+                value={formData.name}
                 placeholder="Full Name"
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--invent-blue)]"
@@ -106,6 +141,7 @@ export default function AcademyPage() {
             <div>
               <input
                 name="email"
+                value={formData.email}
                 placeholder="Email"
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--invent-blue)]"
@@ -117,6 +153,7 @@ export default function AcademyPage() {
             <div>
               <input
                 name="phone"
+                value={formData.phone}
                 placeholder="Phone"
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--invent-blue)]"
@@ -128,6 +165,7 @@ export default function AcademyPage() {
             <div>
               <select
                 name="ageRange"
+                value={formData.ageRange}
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--invent-blue)]"
               >
@@ -142,6 +180,7 @@ export default function AcademyPage() {
             <div>
               <select
                 name="stream"
+                value={formData.stream}
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--invent-blue)]"
               >
@@ -155,6 +194,7 @@ export default function AcademyPage() {
             {/* MESSAGE */}
             <textarea
               name="message"
+              value={formData.message}
               placeholder="Additional info"
               onChange={handleChange}
               className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--invent-blue)]"
