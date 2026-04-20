@@ -158,16 +158,22 @@ export async function POST(request: NextRequest) {
     };
 
     // ✅ Try email but don’t break UX
-    try {
+     try {
       await sendEmail(sanitizedData);
-    } catch (error) {
-      console.error('Email failed but continuing:', error);
-    }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Registration received successfully',
-    });
+      return NextResponse.json({
+        success: true,
+        message: 'Registration received successfully',
+      });
+
+    } catch (error) {
+      console.error('Email error:', error);
+
+      return NextResponse.json(
+        { success: false, error: 'Failed to send email' },
+        { status: 500 }
+      );
+    }
 
   } catch (error) {
     console.error('API error:', error);

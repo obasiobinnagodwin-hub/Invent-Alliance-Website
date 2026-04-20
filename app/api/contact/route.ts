@@ -121,15 +121,21 @@ export async function POST(request: NextRequest) {
 
     // ✅ Try email but don't break UX
     try {
-      await sendEmail(sanitizedData);
-    } catch (err) {
-      console.error('Email failed but continuing:', err);
-    }
+  await sendEmail(sanitizedData);
 
-    return NextResponse.json({
-      success: true,
-      message: 'Thank you for your message! We will get back to you soon.',
-    });
+  return NextResponse.json({
+    success: true,
+    message: 'Thank you for your message! We will get back to you soon.',
+  });
+
+} catch (err) {
+  console.error('Email error:', err);
+
+  return NextResponse.json(
+    { success: false, error: 'Failed to send email' },
+    { status: 500 }
+  );
+}
 
   } catch (error) {
     console.error('Contact form error:', error);
