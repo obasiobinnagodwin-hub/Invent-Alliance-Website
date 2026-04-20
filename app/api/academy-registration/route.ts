@@ -36,14 +36,19 @@ async function sendEmail(data: {
   stream: string;
   message?: string;
 }) {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail', // ✅ use Gmail
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-    connectionTimeout: 10000,
-  });
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+  throw new Error("Missing SMTP credentials");
+}
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // true for 465
+  auth: {
+    user: process.env.SMTP_USER!,
+    pass: process.env.SMTP_PASS!,
+  },
+});
 
   const streamLabel =
     data.stream === 'professional'
